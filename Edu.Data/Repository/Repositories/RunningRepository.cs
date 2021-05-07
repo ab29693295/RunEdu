@@ -2,10 +2,10 @@
 namespace Edu.Data
 {
 
-    public partial class DEquipMeal : GenericRepository<EquipMeal>
+    public partial class DRunning : GenericRepository<Running>
 	{
 		EduContext db;
-		public DEquipMeal(EduContext DbContext)
+		public DRunning(EduContext DbContext)
 			: base(DbContext)
 		{
 			db = DbContext;

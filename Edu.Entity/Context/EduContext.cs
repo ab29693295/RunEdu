@@ -11,16 +11,15 @@ namespace Edu.Entity
             : base("name=EduContext")
         {
         }
-        public virtual DbSet<EquipMeal> EquipMeal { get; set; }
-        public virtual DbSet<EquipMB> EquipMB { get; set; }
-        public virtual DbSet<PhotoBorder> PhotoBorder { get; set; }
-        public virtual DbSet<OrderPhoto> OrderPhoto { get; set; }
+   
+        public virtual DbSet<Score> Score { get; set; }
+        public virtual DbSet<Team> Team { get; set; }
         public virtual DbSet<LogInfo> LogInfo { get; set; }
-        public virtual DbSet<Equipment> Equipment { get; set; }
-        public virtual DbSet<Menu> Menu { get; set; }
-        public virtual DbSet<Order> Order { get; set; }
+        public virtual DbSet<TeamUser> TeamUser { get; set; }
+        public virtual DbSet<Running> Running { get; set; }
+        public virtual DbSet<RunPoint> RunPoint { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
-        public virtual DbSet<RoleInfo> RoleInfo { get; set; }
+ 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

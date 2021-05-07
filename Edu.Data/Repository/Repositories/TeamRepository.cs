@@ -2,10 +2,10 @@
 namespace Edu.Data
 {
 
-    public partial class DEquipMB : GenericRepository<EquipMB>
+    public partial class DTeam : GenericRepository<Team>
 	{
 		EduContext db;
-		public DEquipMB(EduContext DbContext)
+		public DTeam(EduContext DbContext)
 			: base(DbContext)
 		{
 			db = DbContext;

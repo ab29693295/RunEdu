@@ -2,10 +2,10 @@
 namespace Edu.Data
 {
 
-    public partial class DMenu :GenericRepository<Menu>
+    public partial class DScore : GenericRepository<Score>
 	{
 		EduContext db;
-		public DMenu(EduContext DbContext)
+		public DScore(EduContext DbContext)
 			: base(DbContext)
 		{
 			db = DbContext;

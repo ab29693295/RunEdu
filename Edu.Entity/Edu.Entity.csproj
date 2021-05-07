@@ -60,15 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\EduContext.cs" />
-    <Compile Include="Entity\EquipMB.cs" />
-    <Compile Include="Entity\EquipMeal.cs" />
-    <Compile Include="Entity\Equipment.cs" />
+    <Compile Include="Entity\TeamUser.cs" />
     <Compile Include="Entity\LogInfo.cs" />
-    <Compile Include="Entity\Menu.cs" />
-    <Compile Include="Entity\Order.cs" />
-    <Compile Include="Entity\OrderPhoto.cs" />
-    <Compile Include="Entity\PhotoBorder.cs" />
-    <Compile Include="Entity\RoleInfo.cs" />
+    <Compile Include="Entity\Running.cs" />
+    <Compile Include="Entity\RunPoint.cs" />
+    <Compile Include="Entity\Score.cs" />
+    <Compile Include="Entity\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entity\UserInfo.cs" />
   </ItemGroup>

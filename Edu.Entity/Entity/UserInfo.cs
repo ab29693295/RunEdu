@@ -34,7 +34,6 @@ namespace Edu.Entity
         /// </summary>
         public System.String TrueName { get { return this._TrueName; } set { this._TrueName = value; } }
 
-
         private System.String _Phone;
         /// <summary>
         /// 
@@ -101,5 +100,16 @@ namespace Edu.Entity
         /// </summary>
         public System.Int32? Creator { get { return this._Creator; } set { this._Creator = value; } }
 
+        private System.String _Weight;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.String Weight { get { return this._Weight; } set { this._Weight = value; } }
+
+        private System.String _Height;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.String Height { get { return this._Height; } set { this._Height = value; } }
     }
 }

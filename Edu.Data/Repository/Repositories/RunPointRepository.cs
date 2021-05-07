@@ -2,10 +2,10 @@
 namespace Edu.Data
 {
 
-    public partial class DEquipment : GenericRepository<Equipment>
+    public partial class DRunPoint : GenericRepository<RunPoint>
 	{
 		EduContext db;
-		public DEquipment(EduContext DbContext)
+		public DRunPoint(EduContext DbContext)
 			: base(DbContext)
 		{
 			db = DbContext;

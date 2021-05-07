@@ -2,10 +2,10 @@
 namespace Edu.Data
 {
 
-    public partial class DRoleInfo : GenericRepository<RoleInfo>
+    public partial class DTeamUser : GenericRepository<TeamUser>
 	{
 		EduContext db;
-		public DRoleInfo(EduContext DbContext)
+		public DTeamUser(EduContext DbContext)
 			: base(DbContext)
 		{
 			db = DbContext;

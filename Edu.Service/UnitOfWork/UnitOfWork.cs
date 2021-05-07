@@ -36,121 +36,79 @@ namespace Edu.Service
                 return _DLogInfo;
             }
         }
-        private DEquipMeal _DEquipMeal;
+        private DRunning _DRunning;
 
-        public DEquipMeal DEquipMeal
+        public DRunning DRunning
         {
             get
             {
-                if (this._DEquipMeal == null)
+                if (this._DRunning == null)
                 {
-                    this._DEquipMeal = new DEquipMeal(context);
+                    this._DRunning = new DRunning(context);
                 }
-                return _DEquipMeal;
+                return _DRunning;
             }
         }
 
-        private DEquipMB _DEquipMB;
+        private DRunPoint _DRunPoint;
 
-        public DEquipMB DEquipMB
+        public DRunPoint DRunPoint
         {
             get
             {
-                if (this._DEquipMB == null)
+                if (this._DRunPoint == null)
                 {
-                    this._DEquipMB = new DEquipMB(context);
+                    this._DRunPoint = new DRunPoint(context);
                 }
-                return _DEquipMB;
+                return _DRunPoint;
             }
         }
 
-        private DPhotoBorder _DPhotoBorder;
+        private DScore _DScore;
 
-        public DPhotoBorder DPhotoBorder
+        public DScore DScore
         {
             get
             {
-                if (this._DPhotoBorder == null)
+                if (this._DScore == null)
                 {
-                    this._DPhotoBorder = new DPhotoBorder(context);
+                    this._DScore = new DScore(context);
                 }
-                return _DPhotoBorder;
+                return _DScore;
             }
         }
 
-        private DEquipment _DEquipment;
+        private DTeam _DTeam;
       
-        public DEquipment DEquipment
+        public DTeam DTeam
         {
             get
             {
-                if (this._DEquipment == null)
+                if (this._DTeam == null)
                 {
-                    this._DEquipment = new DEquipment(context);
+                    this._DTeam = new DTeam(context);
                 }
-                return _DEquipment;
+                return _DTeam;
             }
         }
 
 		
-		private DMenu _DMenu;
+		private DTeamUser _DTeamUser;
       
-        public DMenu DMenu
+        public DTeamUser DTeamUser
         {
             get
             {
-                if (this._DMenu == null)
+                if (this._DTeamUser == null)
                 {
-                    this._DMenu = new DMenu(context);
+                    this._DTeamUser = new DTeamUser(context);
                 }
-                return _DMenu;
+                return _DTeamUser;
             }
         }
 
 		
-		private DOrder _DOrder;
-      
-        public DOrder DOrder
-        {
-            get
-            {
-                if (this._DOrder == null)
-                {
-                    this._DOrder = new DOrder(context);
-                }
-                return _DOrder;
-            }
-        }
-
-		
-		private DOrderPhoto _DOrderPhoto;
-      
-        public DOrderPhoto DOrderPhoto
-        {
-            get
-            {
-                if (this._DOrderPhoto == null)
-                {
-                    this._DOrderPhoto = new DOrderPhoto(context);
-                }
-                return _DOrderPhoto;
-            }
-        }
-
-		
-		private DRoleInfo _DRoleInfo;
-      
-        public DRoleInfo DRoleInfo
-        {
-            get
-            {
-                if (this._DRoleInfo == null)
-                {
-                    this._DRoleInfo = new DRoleInfo(context);
-                }
-                return _DRoleInfo;
-            }
-        }
+	
 
 		
 		private DUserInfo _DUserInfo;
