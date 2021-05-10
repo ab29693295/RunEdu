@@ -149,7 +149,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\OdPhotoController.cs" />
+    <Compile Include="API\RunAPIController.cs" />
+    <Compile Include="API\TeamController.cs" />
+    <Compile Include="API\UserController.cs" />
     <Compile Include="API\WeiXinController.cs" />
+    <Compile Include="API\WeiXinUserController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />

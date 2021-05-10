@@ -111,5 +111,19 @@ namespace Edu.Entity
         /// 
         /// </summary>
         public System.String Height { get { return this._Height; } set { this._Height = value; } }
+
+        private System.String _HeadPhoto;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.String HeadPhoto { get { return this._HeadPhoto; } set { this._HeadPhoto = value; } }
+
+        private System.String _TeamName;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.String TeamName { get { return this._TeamName; } set { this._TeamName = value; } }
+
+        
     }
 }

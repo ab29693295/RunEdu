@@ -49,11 +49,11 @@ namespace Edu.Entity
         /// </summary>
         public System.Int32? MaxCount { get { return this._MaxCount; } set { this._MaxCount = value; } }
 
-        private System.String _CreatDate;
+        private System.DateTime? _CreatDate;
         /// <summary>
         /// 创建时间
         /// </summary>
-        public System.String CreatDate { get { return this._CreatDate; } set { this._CreatDate = value; } }
+        public System.DateTime? CreatDate { get { return this._CreatDate; } set { this._CreatDate = value; } }
 
         private System.Int32? _Creator;
         /// <summary>
