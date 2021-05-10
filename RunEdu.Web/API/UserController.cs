@@ -16,6 +16,35 @@ namespace Edu.Web.API
     public class UserController : BaseAPIController
     {
         /// <summary>
+        /// 根据微信ID获取用户信息
+        /// </summary>
+        /// <param name="WxID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult ExistUser(string WxID)
+        {
+            try
+            {
+                var user = unitOfWork.DUserInfo.Get(p=>p.WxID==WxID);
+
+                if (user != null&&user.Count()>0)
+                {
+                    return Json(new { R = true, user = user });
+                }
+                else
+                {
+                    return Json(new { R = false, user = user });
+                }
+
+               
+            }
+            catch (Exception ex)
+            {
+                return Json(new { R = false, user = "" });
+            }
+        }
+
+        /// <summary>
         /// 获取用户信息
         /// </summary>
         /// <param name="ID"></param>
@@ -59,15 +88,14 @@ namespace Edu.Web.API
                 int userID = 0;
                 if (!string.IsNullOrEmpty(oModel.WxID))
                 {
-                    var user = unitOfWork.DUserInfo.GetByID(oModel.ID);
+                    var user = unitOfWork.DUserInfo.Get(p => p.WxID == oModel.WxID).FirstOrDefault();
                     if (user != null)
                     {
 
-                        user.TrueName = oModel.TrueName;
-                        user.PassWord = oModel.Password;
-                        user.NickName = oModel.NickName;
-                        user.HeadPhoto = oModel.HeadPhoto;
-                        user.TeamName= oModel.TeamName;
+                        us.Height = oModel.High;
+                        us.Weight = oModel.Weight;
+                        us.Age = oModel.Age;
+                        user.TeamName = oModel.TeamName;
                         unitOfWork.DUserInfo.Update(user);
                         unitOfWork.Save();
 
@@ -75,20 +103,17 @@ namespace Edu.Web.API
                     }
                     else
                     {
-                        us.PassWord = oModel.Password;
-                        us.TrueName = oModel.TrueName;
-
-                        us.NickName = oModel.NickName;
-                        us.HeadPhoto = oModel.HeadPhoto;
-                        us.WxID = oModel.WxID;
-                        us.CreatDate = DateTime.Now;
-
+                        us.Height = oModel.High;
+                        us.Weight = oModel.Weight;
+                        us.Age = oModel.Age;
+                    
+                        user.TeamName = oModel.TeamName;
                         unitOfWork.DUserInfo.Insert(us);
 
                         unitOfWork.Save();
                         userID = us.ID;
                     }
-                    var tUser = unitOfWork.DTeamUser.Get(p => p.UserID == userID && p.TeamID == oModel.TeamID).FirstOrDefault();
+                    var tUser = unitOfWork.DTeamUser.Get(p => p.WXUserID == oModel.WxID && p.TeamID == oModel.TeamID).FirstOrDefault();
                     if (tUser != null)
                     {
                         tUser.Status = 1;
@@ -102,13 +127,13 @@ namespace Edu.Web.API
                         tmUser.CreatDate = DateTime.Now;
                         tmUser.TeamID = oModel.TeamID;
                         tmUser.TeamName = oModel.TeamName;
-                        tmUser.UserID = userID;
+                        tmUser.WXUserID = oModel.WxID;
                         tmUser.UserName = oModel.UserName;
                         unitOfWork.DTeamUser.Insert(tUser);
                         unitOfWork.Save();
                     }
 
-                    var tuserList = unitOfWork.DTeamUser.Get(p => p.UserID == userID&&p.TeamID!= oModel.TeamID);
+                    var tuserList = unitOfWork.DTeamUser.Get(p => p.WXUserID == oModel.WxID && p.TeamID!= oModel.TeamID);
                     if (tuserList != null && tuserList.Count() > 0)
                     {
                         foreach (var item in tuserList)
@@ -118,13 +143,7 @@ namespace Edu.Web.API
                             unitOfWork.Save();
                         }
                     }
-
-
-
                 }
-
-               
-
                 return Json(new { R = true, M = "用户信息完善成功！" });
             }
             catch (Exception ex)

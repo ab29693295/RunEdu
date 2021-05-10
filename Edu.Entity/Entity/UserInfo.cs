@@ -40,17 +40,17 @@ namespace Edu.Entity
         /// </summary>
         public System.String Phone { get { return this._Phone; } set { this._Phone = value; } }
 
-        private System.Int32? _Sex;
+        private System.String _Sex;
         /// <summary>
         /// 
         /// </summary>
-        public System.Int32? Sex { get { return this._Sex; } set { this._Sex = value; } }
+        public System.String Sex { get { return this._Sex; } set { this._Sex = value; } }
 
-        private System.String _Age;
+        private System.Int32? _Age;
         /// <summary>
         /// 
         /// </summary>
-        public System.String Age { get { return this._Age; } set { this._Age = value; } }
+        public System.Int32? Age { get { return this._Age; } set { this._Age = value; } }
 
         private System.String _PassWord;
         /// <summary>

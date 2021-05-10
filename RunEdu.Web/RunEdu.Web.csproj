@@ -150,6 +150,7 @@
   <ItemGroup>
     <Compile Include="API\OdPhotoController.cs" />
     <Compile Include="API\RunAPIController.cs" />
+    <Compile Include="API\RunPointController.cs" />
     <Compile Include="API\TeamController.cs" />
     <Compile Include="API\UserController.cs" />
     <Compile Include="API\WeiXinController.cs" />

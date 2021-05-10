@@ -34,11 +34,11 @@ namespace Edu.Entity
         /// </summary>
         public System.String TeamName { get { return this._TeamName; } set { this._TeamName = value; } }
 
-        private System.Int32? _UserID;
+        private System.String _WXUserID;
         /// <summary>
-        /// ÓÃ»§ID
+        /// 
         /// </summary>
-        public System.Int32? UserID { get { return this._UserID; } set { this._UserID = value; } }
+        public System.String WXUserID { get { return this._WXUserID; } set { this._WXUserID = value; } }
 
         private System.String _UserName;
         /// <summary>

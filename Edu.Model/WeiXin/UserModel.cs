@@ -32,6 +32,16 @@ namespace Edu.Model.WeiXin
         /// </summary>
         public string Weight { get; set; }
 
+        /// <summary>
+        /// 年龄
+        /// </summary>
+        public int Age { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Sex { get; set; }
+
 
         public string Password { get; set; }
         /// <summary>
@@ -39,9 +49,9 @@ namespace Edu.Model.WeiXin
         /// </summary>
         public string NickName { get; set; }
         /// <summary>
-        /// 城市
+        /// 地址
         /// </summary>
-        public string City { get; set; }
+        public string Address { get; set; }
         /// <summary>
         /// 头像
         /// </summary>
