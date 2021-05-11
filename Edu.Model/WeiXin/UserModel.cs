@@ -68,7 +68,7 @@ namespace Edu.Model.WeiXin
         public string TeamName { get; set; }
 
 
-
+        public int IsCheck { get; set; }
 
     }
 }

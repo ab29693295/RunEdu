@@ -52,16 +52,41 @@ namespace Edu.Entity
         /// </summary>
         public System.String TotalTime { get { return this._TotalTime; } set { this._TotalTime = value; } }
 
-        private System.String _TotalScore;
+        private System.Int32? _TotalScore;
         /// <summary>
         /// 总积分
         /// </summary>
-        public System.String TotalScore { get { return this._TotalScore; } set { this._TotalScore = value; } }
+        public System.Int32? TotalScore { get { return this._TotalScore; } set { this._TotalScore = value; } }
 
         private System.DateTime? _CreateDate;
         /// <summary>
         /// 
         /// </summary>
         public System.DateTime? CreateDate { get { return this._CreateDate; } set { this._CreateDate = value; } }
+
+        private System.Int32? _PointScore;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.Int32? PointScore { get { return this._PointScore; } set { this._PointScore = value; } }
+
+        private System.Int32? _RunScore;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.Int32? RunScore { get { return this._RunScore; } set { this._RunScore = value; } }
+
+        private System.String _BurnHeat;
+        /// <summary>
+        /// 消耗总热量
+        /// </summary>
+        public System.String BurnHeat { get { return this._BurnHeat; } set { this._BurnHeat = value; } }
+
+        private System.Double? _Speed;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.Double? Speed { get { return this._Speed; } set { this._Speed = value; } }
+
     }
 }

@@ -124,6 +124,11 @@ namespace Edu.Entity
         /// </summary>
         public System.String TeamName { get { return this._TeamName; } set { this._TeamName = value; } }
 
+        private System.Int32? _IsCheck;
+        /// <summary>
+        /// 
+        /// </summary>
+        public System.Int32? IsCheck { get { return this._IsCheck; } set { this._IsCheck = value; } }
         
     }
 }

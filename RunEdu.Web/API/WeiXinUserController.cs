@@ -51,7 +51,7 @@ namespace Edu.Web.API
                     {
                         us.Sex = oModel.Sex;
                         us.Address = oModel.Address;
-
+                        us.IsCheck = oModel.IsCheck;
                         us.NickName = oModel.NickName;
                         us.HeadPhoto = oModel.HeadPhoto;
                         us.WxID = oModel.WxID;
