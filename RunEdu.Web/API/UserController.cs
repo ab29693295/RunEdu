@@ -79,7 +79,7 @@ namespace Edu.Web.API
                 //JSONHelper.ObjectToJson(postContent);
                 //AddLive aLive= JSONHelper.Deserialize<AddLive>(postContent);
                 UserModel oModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserModel>(postContent);
-
+                 
 
 
 
@@ -92,9 +92,9 @@ namespace Edu.Web.API
                     if (user != null)
                     {
 
-                        us.Height = oModel.High;
-                        us.Weight = oModel.Weight;
-                        us.Age = oModel.Age;
+                        user.Height = oModel.High;
+                        user.Weight = oModel.Weight;
+                        user.Age = oModel.Age;
                         user.TeamName = oModel.TeamName;
                         unitOfWork.DUserInfo.Update(user);
                         unitOfWork.Save();
@@ -106,8 +106,8 @@ namespace Edu.Web.API
                         us.Height = oModel.High;
                         us.Weight = oModel.Weight;
                         us.Age = oModel.Age;
-                    
-                        user.TeamName = oModel.TeamName;
+
+                        us.TeamName = oModel.TeamName;
                         unitOfWork.DUserInfo.Insert(us);
 
                         unitOfWork.Save();
@@ -133,7 +133,7 @@ namespace Edu.Web.API
                         unitOfWork.Save();
                     }
 
-                    var tuserList = unitOfWork.DTeamUser.Get(p => p.WXUserID == oModel.WxID && p.TeamID!= oModel.TeamID);
+                    var tuserList = unitOfWork.DTeamUser.Get(p => p.WXUserID == oModel.WxID && p.TeamID != oModel.TeamID);
                     if (tuserList != null && tuserList.Count() > 0)
                     {
                         foreach (var item in tuserList)
@@ -143,8 +143,13 @@ namespace Edu.Web.API
                             unitOfWork.Save();
                         }
                     }
+
+                    return Json(new { R = true, M = "添加信息成功！" });
                 }
-                return Json(new { R = true, M = "用户信息完善成功！" });
+                else {
+                    return Json(new { R = true, M = "微信ID为空！" });
+                }
+              
             }
             catch (Exception ex)
             {
