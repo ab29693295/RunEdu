@@ -129,7 +129,7 @@ namespace Edu.Web.API
                         tmUser.TeamName = oModel.TeamName;
                         tmUser.WXUserID = oModel.WxID;
                         tmUser.UserName = oModel.UserName;
-                        unitOfWork.DTeamUser.Insert(tUser);
+                        unitOfWork.DTeamUser.Insert(tmUser);
                         unitOfWork.Save();
                     }
 
