@@ -79,8 +79,8 @@ namespace Edu.Web.API
                 //JSONHelper.ObjectToJson(postContent);
                 //AddLive aLive= JSONHelper.Deserialize<AddLive>(postContent);
                 UserModel oModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserModel>(postContent);
-                 
 
+                LogHelper.Info("开始修改用户信息");
 
 
                 string OrderID = Edu.Tools.CombHelper.GenerateLong().ToString();
@@ -88,10 +88,12 @@ namespace Edu.Web.API
                 int userID = 0;
                 if (!string.IsNullOrEmpty(oModel.WxID))
                 {
+
+                    LogHelper.Info("开始修改用户信息WxID"+ oModel.WxID);
                     var user = unitOfWork.DUserInfo.Get(p => p.WxID == oModel.WxID).FirstOrDefault();
                     if (user != null)
                     {
-
+                        LogHelper.Info("获取到用户信息" + oModel.WxID);
                         user.Height = oModel.High;
                         user.Weight = oModel.Weight;
                         user.Age = oModel.Age;
@@ -103,6 +105,8 @@ namespace Edu.Web.API
                     }
                     else
                     {
+                        LogHelper.Info("没有获取到用户信息" + oModel.WxID);
+
                         us.Height = oModel.High;
                         us.Weight = oModel.Weight;
                         us.Age = oModel.Age;

@@ -14,7 +14,14 @@ namespace Edu.Web.API
 {
     public class RunAPIController : BaseAPIController
     {
+        /// <summary>
+        /// 获取当日数据
+        /// </summary>
+        /// <param name="WxUserID"></param>
+        /// <returns></returns>
         [HttpGet]
+
+        
         public IHttpActionResult GetTodayRUn(int WxUserID)
         {
             string time = DateTime.Now.ToShortDateString();
@@ -26,6 +33,18 @@ namespace Edu.Web.API
             DateTime time2 = Convert.ToDateTime(time + " 23:59:59");
 
             var runList = unitOfWork.DRunning.Get(p => p.CreateDate > time1 && p.CreateDate < time2);
+
+            int minSpeedA = 100;
+            int minSpeedB = 100;
+
+            if (runList != null && runList.Count() > 0)
+            {
+                foreach (var item in runList)
+                {
+                   
+                }
+
+            }
 
             return Json(new { R = true });
         }
