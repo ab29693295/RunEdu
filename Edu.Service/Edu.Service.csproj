@@ -74,6 +74,7 @@
     <Compile Include="Service\AccountService.cs" />
     <Compile Include="Service\FileUploadService.cs" />
     <Compile Include="Service\ResourseConvert.cs" />
+    <Compile Include="Service\TimeHelper.cs" />
     <Compile Include="UnitOfWork\UnitOfWork.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

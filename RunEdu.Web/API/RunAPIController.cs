@@ -1,5 +1,7 @@
 ﻿using Edu.Entity;
+using Edu.Model;
 using Edu.Service;
+using Edu.Service.Service;
 using Edu.Tools;
 using System;
 using System.Collections.Generic;
@@ -34,19 +36,52 @@ namespace Edu.Web.API
 
             var runList = unitOfWork.DRunning.Get(p => p.CreateDate > time1 && p.CreateDate < time2);
 
-            int minSpeedA = 100;
-            int minSpeedB = 100;
+            double minSpeedA = 100;
+            double minSpeedB = 100;
 
             if (runList != null && runList.Count() > 0)
             {
+                TodayRunModel tM = new TodayRunModel();
+
+                double TotalKm = 0;
+
+                int totalSeconds = 0;
+
+                double totalHeat = 0;
+
+                int totalscore = 0;
+
                 foreach (var item in runList)
                 {
-                   
+                    TotalKm = TotalKm + Convert.ToDouble(item.Totalkm);
+
+                    totalSeconds = totalSeconds + Convert.ToDateTime(item.TotalTime).Hour * 3600 + Convert.ToDateTime(item.TotalTime).Minute * 60;
+
+                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat);
+
+                    minSpeedA = Convert.ToDouble(item.Speed);
+
+                    if (minSpeedB > minSpeedA)
+                    {
+                        minSpeedB = minSpeedA;
+                    }
+
+                    totalscore = totalscore + Convert.ToInt32(item.PointScore);
                 }
 
+                tM.MinSpeed = minSpeedB.ToString();
+                tM.TotalKM = TotalKm;
+                tM.TotalHeat = totalHeat;
+                tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
+
+                return Json(new { R = true, Data = tM });
+            }
+            else
+            {
+                return Json(new { R = true, Data = "" });
             }
 
-            return Json(new { R = true });
+           
         }
 
 
