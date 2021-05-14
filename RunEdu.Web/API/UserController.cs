@@ -97,6 +97,7 @@ namespace Edu.Web.API
                         user.Height = oModel.High;
                         user.Weight = oModel.Weight;
                         user.Age = oModel.Age;
+                        user.TeamID = oModel.TeamID;
                         user.TeamName = oModel.TeamName;
                         unitOfWork.DUserInfo.Update(user);
                         unitOfWork.Save();

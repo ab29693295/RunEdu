@@ -70,5 +70,8 @@ namespace Edu.Model.WeiXin
 
         public int IsCheck { get; set; }
 
+
+        
+
     }
 }
