@@ -129,6 +129,12 @@ namespace Edu.Entity
         /// 
         /// </summary>
         public System.Int32? IsCheck { get { return this._IsCheck; } set { this._IsCheck = value; } }
-        
+
+        private System.Int32? _TeamID;
+        /// <summary>
+        /// Õ≈∂”ID
+        /// </summary>
+        public System.Int32? TeamID { get { return this._TeamID; } set { this._TeamID = value; } }
+
     }
 }

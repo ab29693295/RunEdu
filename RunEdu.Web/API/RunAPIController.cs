@@ -160,7 +160,7 @@ namespace Edu.Web.API
                     double weight = Convert.ToDouble(user.Weight);
                     double Km = Convert.ToDouble(runModel.Totalkm);
 
-                    runModel.BurnHeat = (weight * Km).ToString()+"K";
+                    //runModel.BurnHeat = (weight * Km).ToString()+"K";
 
                     runModel.RunScore =Convert.ToInt32( 100 * Km);
 
