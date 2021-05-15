@@ -17,6 +17,54 @@ namespace Edu.Web.API
     public class RunAPIController : BaseAPIController
     {
         /// <summary>
+        /// 按照个人查询
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetRank(int DayCount)
+        {
+            try {
+                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
+
+                var Data = unitOfWork.context.Database.SqlQuery<RankModel>(sql);
+
+                return Json(new { R = true, Data = Data });
+                
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info(ex.ToString());
+
+
+                return Json(new { R = false, Data = "" });
+            }
+        }
+
+        /// <summary>
+        /// 按团队分组
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetTeamRank(int DayCount)
+        {
+            try
+            {
+                string Sql = "select COUNT(WXUserID) as UserCOunt,TeamID,B.TeamName from running as A,team as B WHERE A.TeamID=B.ID and DATE_SUB(CURDATE(), INTERVAL "+ DayCount.ToString()+ " DAY) <= date(A.CreateDate) GROUP BY TeamID";
+
+                var Data = unitOfWork.context.Database.SqlQuery<TeamRunModel>(Sql);
+
+                return Json(new { R = true, Data = Data });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info(ex.ToString());
+
+
+                return Json(new { R = false, Data = "" });
+            }
+          
+        }
+        /// <summary>
         /// 获取当日数据
         /// </summary>
         /// <param name="WxUserID"></param>
@@ -24,7 +72,7 @@ namespace Edu.Web.API
         [HttpGet]
 
         
-        public IHttpActionResult GetTodayRUn(int WxUserID)
+        public IHttpActionResult GetTodayRUn(string WxUserID)
         {
             string time = DateTime.Now.ToShortDateString();
 
@@ -34,7 +82,7 @@ namespace Edu.Web.API
 
             DateTime time2 = Convert.ToDateTime(time + " 23:59:59");
 
-            var runList = unitOfWork.DRunning.Get(p => p.CreateDate > time1 && p.CreateDate < time2);
+            var runList = unitOfWork.DRunning.Get(p => p.CreateDate > time1 && p.CreateDate < time2&&p.WXUserID==WxUserID);
 
             double minSpeedA = 100;
             double minSpeedB = 100;
@@ -49,7 +97,9 @@ namespace Edu.Web.API
 
                 double totalHeat = 0;
 
-                int totalscore = 0;
+                int totalPointscore = 0;
+
+                int totalRunscore = 0;
 
                 foreach (var item in runList)
                 {
@@ -66,19 +116,21 @@ namespace Edu.Web.API
                         minSpeedB = minSpeedA;
                     }
 
-                    totalscore = totalscore + Convert.ToInt32(item.PointScore);
+                    totalPointscore = totalPointscore + Convert.ToInt32(item.PointScore);
+                    totalRunscore= totalRunscore+ Convert.ToInt32(item.RunScore);
                 }
 
                 tM.MinSpeed = minSpeedB.ToString();
                 tM.TotalKM = TotalKm;
                 tM.TotalHeat = totalHeat;
                 tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
-
+                tM.PointScore = totalPointscore;
+                tM.RunScore = totalRunscore;
                 return Json(new { R = true, Data = tM });
             }
             else
             {
-                return Json(new { R = true, Data = "" });
+                return Json(new { R = false, Data = "" });
             }
 
            
