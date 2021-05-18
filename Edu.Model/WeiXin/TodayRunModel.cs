@@ -28,6 +28,13 @@ namespace Edu.Model
         public int UserCount { get; set; }
         public int TeamID { get; set; }
         public string TeamName { get; set; }
+
+   
+        public decimal Totalkm { get; set; }
+        public string NickName { get; set; }
+        public string HeadPhoto { get; set; }
+
+        public int Sex { get; set; }
       
        
     }

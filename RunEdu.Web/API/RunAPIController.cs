@@ -16,6 +16,8 @@ namespace Edu.Web.API
 {
     public class RunAPIController : BaseAPIController
     {
+
+
         /// <summary>
         /// 按照个人查询
         /// </summary>
@@ -41,15 +43,15 @@ namespace Edu.Web.API
         }
 
         /// <summary>
-        /// 按团队分组
+        /// 按团队排行
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IHttpActionResult GetTeamRank(int DayCount)
+        public IHttpActionResult GetTeamRank(int DayCount,int TeamID)
         {
             try
             {
-                string Sql = "select COUNT(WXUserID) as UserCOunt,SUM(A.Totalkm) as Totalkm,TeamID,B.TeamName from running as A,team as B WHERE A.TeamID=B.ID and DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString()+ " DAY) <= date(A.CreateDate) GROUP BY TeamID";
+                string Sql = "SELECT SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.TeamID="+ TeamID .ToString()+ " AND  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC";
 
                 var Data = unitOfWork.context.Database.SqlQuery<TeamRunModel>(Sql);
 
@@ -88,13 +90,87 @@ namespace Edu.Web.API
         public IHttpActionResult GetTodayRunList(string WxUserID)
         {
             
-            var runList = unitOfWork.DRunning.Get(p => p.WXUserID == WxUserID).OrderByDescending(p=>p.ID);
+           var runList = unitOfWork.DRunning.Get(p => p.WXUserID == WxUserID).OrderByDescending(p=>p.ID).Take(30);
 
           
            return Json(new { R = true, Data = runList });
 
         }
 
+        [HttpGet]
+        public IHttpActionResult GetHistoryRun()
+        {
+            return Json(new { R = true, Data = "" });
+        }
+
+        /// <summary>
+        /// 获取个人总数据
+        /// </summary>
+        /// <param name="WxUserID"></param>
+        /// <returns></returns>
+        [HttpGet]
+
+
+        public IHttpActionResult GetPersonTotalRUn(string WxUserID)
+        {
+           
+
+
+      
+            var runList = unitOfWork.DRunning.Get(p =>p.WXUserID == WxUserID);
+
+            double minSpeedA = 100;
+            double minSpeedB = 100;
+
+            if (runList != null && runList.Count() > 0)
+            {
+                TodayRunModel tM = new TodayRunModel();
+
+                decimal TotalKm = 0;
+
+                int totalSeconds = 0;
+
+                double totalHeat = 0;
+
+                int totalPointscore = 0;
+
+                int totalRunscore = 0;
+
+                foreach (var item in runList)
+                {
+                    TotalKm = TotalKm + Convert.ToDecimal(item.Totalkm);
+
+                    totalSeconds = totalSeconds + Convert.ToDateTime(item.TotalTime).Hour * 3600 + Convert.ToDateTime(item.TotalTime).Minute * 60;
+
+                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat);
+
+                    minSpeedA = Convert.ToDouble(item.Speed);
+
+                    if (minSpeedB > minSpeedA)
+                    {
+                        minSpeedB = minSpeedA;
+                    }
+
+                    totalPointscore = totalPointscore + Convert.ToInt32(item.PointScore);
+                    totalRunscore = totalRunscore + Convert.ToInt32(item.RunScore);
+                }
+
+                tM.MinSpeed = minSpeedB.ToString();
+                tM.TotalKM = TotalKm;
+                tM.TotalHeat = totalHeat;
+                tM.RunDate = DateTime.Now.ToString("yyyy.MM.dd");
+                tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
+                tM.PointScore = totalPointscore;
+                tM.RunScore = totalRunscore;
+                return Json(new { R = true, Data = tM });
+            }
+            else
+            {
+                return Json(new { R = false, Data = "" });
+            }
+
+
+        }
 
 
         /// <summary>
@@ -140,7 +216,7 @@ namespace Edu.Web.API
 
                     totalSeconds = totalSeconds + Convert.ToDateTime(item.TotalTime).Hour * 3600 + Convert.ToDateTime(item.TotalTime).Minute * 60;
 
-                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat.Substring(0, item.BurnHeat.Length - 1));
+                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat);
 
                     minSpeedA = Convert.ToDouble(item.Speed);
 
@@ -204,9 +280,9 @@ namespace Edu.Web.API
 
                     int m = Convert.ToDateTime(runModel.TotalTime).Minute;
 
-                    double time = Convert.ToDouble(h + "." + m);
+                    int time = Convert.ToInt32(h*60 + m);
 
-                    runModel.Speed = Convert.ToDouble(Km/time);
+                    runModel.Speed = Convert.ToDouble(time / Km);
                 }
 
                 runModel.CreateDate = DateTime.Now;
