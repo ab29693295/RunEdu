@@ -24,6 +24,72 @@ namespace Edu.Web.API
         public IHttpActionResult GetRank(int DayCount)
         {
             try {
+                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
+
+                var Data = unitOfWork.context.Database.SqlQuery<RankModel>(sql);
+
+                return Json(new { R = true, Data = Data });
+                
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info(ex.ToString());
+
+
+                return Json(new { R = false, Data = "" });
+            }
+        }
+
+        /// <summary>
+        /// 按团队分组
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetTeamRank(int DayCount)
+        {
+            try
+            {
+                string Sql = "select COUNT(WXUserID) as UserCOunt,SUM(A.Totalkm) as Totalkm,TeamID,B.TeamName from running as A,team as B WHERE A.TeamID=B.ID and DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString()+ " DAY) <= date(A.CreateDate) GROUP BY TeamID";
+
+                var Data = unitOfWork.context.Database.SqlQuery<TeamRunModel>(Sql);
+
+                return Json(new { R = true, Data = Data });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info(ex.ToString());
+
+
+                return Json(new { R = false, Data = "" });
+            }
+          
+        }
+
+        /// <summary>
+        /// 获取当日数据列表
+        /// </summary>
+        /// <param name="WxUserID"></param>
+        /// <returns></returns>
+        [HttpGet]
+
+        public IHttpActionResult GetTodayRunList(string WxUserID)
+        {
+            
+            var runList = unitOfWork.DRunning.Get(p => p.WXUserID == WxUserID).OrderByDescending(p=>p.ID);
+
+          
+           return Json(new { R = true, Data = runList });
+
+        }
+
+        /// <summary>
+        /// 按照个人查询
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetRank(int DayCount)
+        {
+            try {
                 string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
 
                 var Data = unitOfWork.context.Database.SqlQuery<RankModel>(sql);
@@ -89,48 +155,11 @@ namespace Edu.Web.API
 
             if (runList != null && runList.Count() > 0)
             {
-                TodayRunModel tM = new TodayRunModel();
-
-                decimal TotalKm = 0;
-
-                int totalSeconds = 0;
-
-                double totalHeat = 0;
-
-                int totalPointscore = 0;
-
-                int totalRunscore = 0;
-
                 foreach (var item in runList)
                 {
-                    TotalKm = TotalKm + Convert.ToDecimal(item.Totalkm);
-
-                    totalSeconds = totalSeconds + Convert.ToDateTime(item.TotalTime).Hour * 3600 + Convert.ToDateTime(item.TotalTime).Minute * 60;
-
-                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat.Substring(0,item.BurnHeat.Length-1));
-
-                    minSpeedA = Convert.ToDouble(item.Speed);
-
-                    if (minSpeedB > minSpeedA)
-                    {
-                        minSpeedB = minSpeedA;
-                    }
-
-                    totalPointscore = totalPointscore + Convert.ToInt32(item.PointScore);
-                    totalRunscore= totalRunscore+ Convert.ToInt32(item.RunScore);
+                   
                 }
 
-                tM.MinSpeed = minSpeedB.ToString();
-                tM.TotalKM = TotalKm;
-                tM.TotalHeat = totalHeat;
-                tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
-                tM.PointScore = totalPointscore;
-                tM.RunScore = totalRunscore;
-                return Json(new { R = true, Data = tM });
-            }
-            else
-            {
-                return Json(new { R = false, Data = "" });
             }
 
            
