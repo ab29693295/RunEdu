@@ -91,7 +91,7 @@ namespace Edu.Web.API
             {
                 TodayRunModel tM = new TodayRunModel();
 
-                double TotalKm = 0;
+                decimal TotalKm = 0;
 
                 int totalSeconds = 0;
 
@@ -103,11 +103,11 @@ namespace Edu.Web.API
 
                 foreach (var item in runList)
                 {
-                    TotalKm = TotalKm + Convert.ToDouble(item.Totalkm);
+                    TotalKm = TotalKm + Convert.ToDecimal(item.Totalkm);
 
                     totalSeconds = totalSeconds + Convert.ToDateTime(item.TotalTime).Hour * 3600 + Convert.ToDateTime(item.TotalTime).Minute * 60;
 
-                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat);
+                    totalHeat = totalHeat + Convert.ToDouble(item.BurnHeat.Substring(0,item.BurnHeat.Length-1));
 
                     minSpeedA = Convert.ToDouble(item.Speed);
 

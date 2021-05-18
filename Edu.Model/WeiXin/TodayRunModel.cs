@@ -11,7 +11,7 @@ namespace Edu.Model
         /// <summary>
         /// 总里程
         /// </summary>
-        public double TotalKM { get; set; }
+        public decimal TotalKM { get; set; }
         public string TotalTime { get; set; }
         public double TotalHeat { get; set; }
         public string MinSpeed { get; set; }

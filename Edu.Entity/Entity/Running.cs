@@ -34,11 +34,11 @@ namespace Edu.Entity
         /// </summary>
         public System.String TeamID { get { return this._TeamID; } set { this._TeamID = value; } }
 
-        private System.Double _Totalkm;
+        private System.Decimal _Totalkm;
         /// <summary>
         /// 总公里数
         /// </summary>
-        public System.Double Totalkm { get { return this._Totalkm; } set { this._Totalkm = value; } }
+        public System.Decimal Totalkm { get { return this._Totalkm; } set { this._Totalkm = value; } }
 
         private System.String _TotalHot;
         /// <summary>
