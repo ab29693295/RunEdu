@@ -1,5 +1,6 @@
 ﻿using Edu.Entity;
 using Edu.Model;
+using Edu.Model.WeiXin;
 using Edu.Service;
 using Edu.Service.Service;
 using Edu.Tools;
@@ -16,7 +17,72 @@ namespace Edu.Web.API
 {
     public class RunAPIController : BaseAPIController
     {
+        [HttpPost]
+        public IHttpActionResult CountPoint()
+        {
+            try
+            {
+                Stream postData = HttpContext.Current.Request.InputStream;
+                StreamReader sRead = new StreamReader(postData);
+                string postContent = sRead.ReadToEnd();
+                sRead.Close();
 
+                Edu.Tools.LogHelper.Info(postContent);
+
+                List<Points> runModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Points>>(postContent);
+                double Dis = 0;
+
+                if (runModel != null && runModel.Count() > 1)
+                {
+                    for (int i = 0; i < runModel.Count() - 1; i++)
+                    {
+
+                        Edu.Tools.LogHelper.Info("开始计算");
+                        double d = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, runModel[i + 1].latitude, runModel[i + 1].longitude);
+
+                        Edu.Tools.LogHelper.Info("距离:"+d.ToString());
+
+                        long FTime = runModel[i].pointTimestamp;
+                        long STime = runModel[i+1].pointTimestamp;
+
+                        double cha = (STime - FTime) / 1000;
+
+                        double speed = (d  / cha);
+
+                        Edu.Tools.LogHelper.Info("速度:" + speed.ToString());
+
+                        if (speed < 0.5 || speed > 7)
+                        {
+
+                        }
+                        else
+                        {
+                            Dis = Dis + d;
+                        }
+
+
+                    }
+                    return Json(new { R = true, Data = (Dis/1000).ToString("0.000") });
+                }
+                else
+                {
+                    return Json(new { R = true, Data = 0 });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Edu.Tools.LogHelper.Info(ex.ToString());
+
+                return Json(new { R = true, Data = 0 });
+            }
+
+
+
+
+        }
+
+      
 
         /// <summary>
         /// 按照个人查询
@@ -51,7 +117,7 @@ namespace Edu.Web.API
         {
             try
             {
-                string Sql = "SELECT SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.TeamID="+ TeamID .ToString()+ " AND  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC";
+                string Sql = "SELECT SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.TeamID=C.ID AND C.ID="+TeamID.ToString()+" AND  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC";
 
                 var Data = unitOfWork.context.Database.SqlQuery<TeamRunModel>(Sql);
 
@@ -157,7 +223,7 @@ namespace Edu.Web.API
 
                 tM.MinSpeed = minSpeedB.ToString();
                 tM.TotalKM = TotalKm;
-                tM.TotalHeat = totalHeat;
+                tM.TotalHeat = Math.Round(totalHeat, 1); 
                 tM.RunDate = DateTime.Now.ToString("yyyy.MM.dd");
                 tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
                 tM.PointScore = totalPointscore;
@@ -231,7 +297,7 @@ namespace Edu.Web.API
 
                 tM.MinSpeed = minSpeedB.ToString();
                 tM.TotalKM = TotalKm;
-                tM.TotalHeat = totalHeat;
+                tM.TotalHeat = Math.Round(totalHeat, 1); ;
                 tM.RunDate = DateTime.Now.ToString("yyyy.MM.dd");
                 tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
                 tM.PointScore = totalPointscore;
