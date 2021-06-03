@@ -4,6 +4,7 @@ using Edu.Model.WeiXin;
 using Edu.Service;
 using Edu.Service.Service;
 using Edu.Tools;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,70 @@ namespace Edu.Web.API
 {
     public class RunAPIController : BaseAPIController
     {
+        [HttpGet]
+        public IHttpActionResult GetHuoYue(int DayCount)
+        {
+            emphasis em = new emphasis();
+            backgroundStyle bd = new backgroundStyle();
+
+         
+           HuoYueModel huating = new HuoYueModel();
+            huating.name = "华庭队";
+            huating.type = "bar";
+            huating.label = "labelOption";
+            huating.barGap = 0;
+            em.focus = "series";
+            huating.emphasis = em;
+            bd.color = "#3BCEDEFF";
+            huating.backgroundStyle = bd;
+
+
+
+            HuoYueModel lanting = new HuoYueModel();
+            lanting.name = "兰庭队";
+            lanting.type = "bar";
+            lanting.label = "labelOption";
+          
+            lanting.emphasis = em;
+         
+
+            HuoYueModel fengge = new HuoYueModel();
+            fengge.name = "兰庭队";
+            fengge.type = "bar";
+            fengge.label = "labelOption";
+
+            fengge.emphasis = em;
+
+            HuoYueModel mingjun = new HuoYueModel();
+            mingjun.name = "兰庭队";
+            mingjun.type = "bar";
+            mingjun.label = "labelOption";
+         
+            mingjun.emphasis = em;
+
+            HuoDate huodate = new HuoDate();
+            huodate.type = "category";
+            axisTick ast= new axisTick();
+            ast.show = "false";
+
+
+            string sql = @"SELECT DATE_FORMAT(CreateDate,'%m.%d') as m,(SELECT COUNT(*) FROM running WHERE TeamID=1 AND DATE_SUB(CURDATE(), INTERVAL  " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T1Count,(SELECT COUNT(*) FROM running WHERE TeamID=2 AND DATE_SUB(CURDATE(), INTERVAL  "+ DayCount.ToString()+ "  DAY) <= date(CreateDate)) as T2Count,(SELECT COUNT(*) FROM running WHERE TeamID=3 AND DATE_SUB(CURDATE(), INTERVAL   " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T3Count,(SELECT COUNT(*) FROM running WHERE TeamID=4  AND DATE_SUB(CURDATE(), INTERVAL   " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T4Count from running  WHERE DATE_SUB(CURDATE(), INTERVAL    " + DayCount.ToString() + "  DAY) <= date(CreateDate) GROUP BY m";
+
+            var data = this.unitOfWork.context.Database.SqlQuery<HuoSqlModel>(sql, new object[0]).ToList();
+            if (data != null && data.Count() > 0)
+            {
+                huating.data = data.Select(p => p.T1Count).ToList();
+                lanting.data = data.Select(p => p.T2Count).ToList();
+                fengge.data = data.Select(p => p.T3Count).ToList();
+                mingjun.data = data.Select(p => p.T4Count).ToList();
+                huodate.data = data.Select(p => p.m).ToList();
+            }
+
+          
+
+            return Json(new { R = true, HT=huating,LT=lanting,FG=fengge,MJ=mingjun,DateList= huodate });
+        }
+
         [HttpPost]
         public IHttpActionResult CountPoint()
         {
@@ -82,55 +147,87 @@ namespace Edu.Web.API
 
         }
 
-      
 
-        /// <summary>
-        /// 按照个人查询
-        /// </summary>
-        /// <returns></returns>
+
         [HttpGet]
-        public IHttpActionResult GetRank(int DayCount)
+        public IHttpActionResult GetRank(int DayCount, string WXUserID = "")
         {
-            try {
-                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
-
-                var Data = unitOfWork.context.Database.SqlQuery<RankModel>(sql);
-
-                return Json(new { R = true, Data = Data });
-                
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Info(ex.ToString());
-
-
-                return Json(new { R = false, Data = "" });
-            }
-        }
-
-        /// <summary>
-        /// 按团队排行
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public IHttpActionResult GetTeamRank(int DayCount,int TeamID)
-        {
+            IHttpActionResult result;
             try
             {
-                string Sql = "SELECT SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.TeamID=C.ID AND C.ID="+TeamID.ToString()+" AND  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC";
-
-                var Data = unitOfWork.context.Database.SqlQuery<TeamRunModel>(Sql);
-
-                return Json(new { R = true, Data = Data });
+                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
+                string sql2 = string.Concat(new string[]
+                {
+                    "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE A.WXUserID='",
+                    WXUserID,
+                    "' AND  DATE_SUB(CURDATE(), INTERVAL ",
+                    DayCount.ToString(),
+                    " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID "
+                });
+               var data = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql, new object[0]);
+               var personData = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql2, new object[0]);
+                result = base.Json(new
+                {
+                    R = true,
+                    Data = data,
+                    PersonData = personData
+                });
             }
             catch (Exception ex)
             {
                 LogHelper.Info(ex.ToString());
-
-
-                return Json(new { R = false, Data = "" });
+                result = base.Json(new
+                {
+                    R = false,
+                    Data = ""
+                });
             }
-          
+            return result;
+        }
+        [HttpGet]
+        public IHttpActionResult GetTeamRank(int DayCount, int TeamID, string WXUserID = "oDyWN5BMhVuLjJqjkd9eBxRDILQA")
+        {
+            IHttpActionResult result;
+            try
+            {
+                string sql = string.Concat(new string[]
+                {
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID  AND A.TeamID=",
+                    TeamID.ToString(),
+                    " AND  DATE_SUB(CURDATE(), INTERVAL ",
+                    DayCount.ToString(),
+                    "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
+                });
+                string sql2 = string.Concat(new string[]
+                {
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.WXUserID='",
+                    WXUserID,
+                    "' AND A.TeamID=",
+                    TeamID.ToString(),
+                    " AND  DATE_SUB(CURDATE(), INTERVAL ",
+                    DayCount.ToString(),
+                    "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
+                });
+                List<TeamRunModel> data = this.unitOfWork.context.Database.SqlQuery<TeamRunModel>(sql, new object[0]).ToList<TeamRunModel>();
+                List<TeamRunModel> personData = this.unitOfWork.context.Database.SqlQuery<TeamRunModel>(sql2, new object[0]).ToList<TeamRunModel>();
+                result = base.Json(new
+                {
+                    R = true,
+                    Data = data,
+                    PersonData = personData
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Info(ex.ToString());
+                result = base.Json(new
+                {
+                    R = false,
+                    Data = "",
+                    PersonData = ""
+                });
+            }
+            return result;
         }
         /// <summary>
         /// 获取跑步详情
@@ -187,20 +284,20 @@ namespace Edu.Web.API
 
             double minSpeedA = 100;
             double minSpeedB = 100;
+            TodayRunModel tM = new TodayRunModel();
 
+            decimal TotalKm = 0;
+
+            int totalSeconds = 0;
+
+            double totalHeat = 0;
+
+            int totalPointscore = 0;
+
+            int totalRunscore = 0;
             if (runList != null && runList.Count() > 0)
             {
-                TodayRunModel tM = new TodayRunModel();
-
-                decimal TotalKm = 0;
-
-                int totalSeconds = 0;
-
-                double totalHeat = 0;
-
-                int totalPointscore = 0;
-
-                int totalRunscore = 0;
+              
 
                 foreach (var item in runList)
                 {
@@ -216,24 +313,30 @@ namespace Edu.Web.API
                     {
                         minSpeedB = minSpeedA;
                     }
+                    minSpeedB = Math.Round(minSpeedB, 1);
 
                     totalPointscore = totalPointscore + Convert.ToInt32(item.PointScore);
                     totalRunscore = totalRunscore + Convert.ToInt32(item.RunScore);
                 }
 
-                tM.MinSpeed = minSpeedB.ToString();
-                tM.TotalKM = TotalKm;
-                tM.TotalHeat = Math.Round(totalHeat, 1); 
-                tM.RunDate = DateTime.Now.ToString("yyyy.MM.dd");
-                tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
-                tM.PointScore = totalPointscore;
-                tM.RunScore = totalRunscore;
-                return Json(new { R = true, Data = tM });
+            
+            }
+            if (minSpeedB == 100)
+            {
+                tM.MinSpeed = "0";
             }
             else
             {
-                return Json(new { R = false, Data = "" });
+                tM.MinSpeed = minSpeedB.ToString();
             }
+         
+            tM.TotalKM = TotalKm;
+            tM.TotalHeat = Math.Round(totalHeat, 1);
+            tM.RunDate = DateTime.Now.ToString("yyyy.MM.dd");
+            tM.TotalTime = TimeHelper.TransTimeSecondIntToString(totalSeconds);
+            tM.PointScore = totalPointscore;
+            tM.RunScore = totalRunscore;
+            return Json(new { R = true, Data = tM });
 
 
         }
@@ -313,60 +416,49 @@ namespace Edu.Web.API
         }
 
 
-        /// <summary>
-        /// 添加跑步信息
-        /// </summary>
-        /// <returns></returns>
         [HttpPost]
         public IHttpActionResult ModyRun()
         {
+            IHttpActionResult result;
             try
             {
-                Stream postData = HttpContext.Current.Request.InputStream;
-                StreamReader sRead = new StreamReader(postData);
-                string postContent = sRead.ReadToEnd();
-                sRead.Close();
-                //JSONHelper.ObjectToJson(postContent);
-                //AddLive aLive= JSONHelper.Deserialize<AddLive>(postContent);
-                Running runModel = Newtonsoft.Json.JsonConvert.DeserializeObject<Running>(postContent);
-
-                var user = unitOfWork.DUserInfo.Get(p => p.WxID == runModel.WXUserID).FirstOrDefault();
-                if (user != null && user.Weight != null)
+                Stream inputStream = HttpContext.Current.Request.InputStream;
+                StreamReader streamReader = new StreamReader(inputStream);
+                string value = streamReader.ReadToEnd();
+                streamReader.Close();
+                Running runModel = JsonConvert.DeserializeObject<Running>(value);
+                UserInfo userInfo = this.unitOfWork.DUserInfo.Get((UserInfo p) => p.WxID == runModel.WXUserID, null, "").FirstOrDefault<UserInfo>();
+                bool flag = userInfo != null && userInfo.Weight != null;
+                if (flag)
                 {
-                    double weight = Convert.ToDouble(user.Weight);
-                    double Km = Convert.ToDouble(runModel.Totalkm);
-
-                    //runModel.BurnHeat = (weight * Km).ToString()+"K";
-
-                    runModel.RunScore =Convert.ToInt32( 100 * Km);
-
-                    runModel.TotalScore = runModel.RunScore+runModel.PointScore;
-
-                    int h = Convert.ToDateTime(runModel.TotalTime).Hour;
-
-                    int m = Convert.ToDateTime(runModel.TotalTime).Minute;
-
-                    int time = Convert.ToInt32(h*60 + m);
-
-                    runModel.Speed = Convert.ToDouble(time / Km);
+                    double num = Convert.ToDouble(userInfo.Weight);
+                    double num2 = Convert.ToDouble(runModel.Totalkm);
+                    runModel.RunScore = new int?(Convert.ToInt32(100.0 * num2));
+                    runModel.TotalScore = runModel.RunScore + runModel.PointScore;
+                    int hour = Convert.ToDateTime(runModel.TotalTime).Hour;
+                    int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
+                    int num3 = Convert.ToInt32(hour * 60 + minute);
+                    runModel.Speed = new double?(Convert.ToDouble((double)num3 / num2));
                 }
-
-                runModel.CreateDate = DateTime.Now;
-
-
-                unitOfWork.DRunning.Insert(runModel);
-
-                unitOfWork.Save();
-
-
-                return Json(new { R = true, M = "跑步信息添加成功！" });
+                runModel.CreateDate = new DateTime?(DateTime.Now);
+                this.unitOfWork.DRunning.Insert(runModel);
+                this.unitOfWork.Save();
+                result = base.Json(new
+                {
+                    R = true,
+                    M = "跑步信息添加成功！"
+                });
             }
             catch (Exception ex)
             {
-
                 LogHelper.Info(ex.ToString());
-                return Json(new { R = false, M = "跑步信息添加失败！" });
+                result = base.Json(new
+                {
+                    R = false,
+                    M = "跑步信息添加失败！"
+                });
             }
+            return result;
         }
     }
 }

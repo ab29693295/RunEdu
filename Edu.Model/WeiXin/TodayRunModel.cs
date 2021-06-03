@@ -24,7 +24,11 @@ namespace Edu.Model
 
     public class TeamRunModel
     {
-
+        public int RankID
+        {
+            get;
+            set;
+        }
         public int UserCount { get; set; }
         public int TeamID { get; set; }
         public string TeamName { get; set; }
