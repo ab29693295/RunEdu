@@ -155,14 +155,14 @@ namespace Edu.Web.API
             IHttpActionResult result;
             try
             {
-                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID ";
+                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID ";
                 string sql2 = string.Concat(new string[]
                 {
                     "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE A.WXUserID='",
                     WXUserID,
                     "' AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
-                    " DAY) <= date(A.CreateDate) and A.TeamID = C.ID GROUP BY WXUserID "
+                    " DAY) <= date(A.CreateDate) and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID "
                 });
                var data = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql, new object[0]);
                var personData = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql2, new object[0]);
