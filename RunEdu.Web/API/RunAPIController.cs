@@ -83,7 +83,7 @@ namespace Edu.Web.API
         }
 
         [HttpPost]
-        public IHttpActionResult CountPoint()
+        public IHttpActionResult CountPoint(int IsOver=0)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Edu.Web.API
                 string postContent = sRead.ReadToEnd();
                 sRead.Close();
 
-                Edu.Tools.LogHelper.Info(postContent);
+                int PlayScore = 0;
 
                 List<Points> runModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Points>>(postContent);
                 double Dis = 0;
@@ -102,10 +102,24 @@ namespace Edu.Web.API
                     for (int i = 0; i < runModel.Count() - 1; i++)
                     {
 
-                        Edu.Tools.LogHelper.Info("开始计算");
+           
                         double d = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, runModel[i + 1].latitude, runModel[i + 1].longitude);
 
-                        Edu.Tools.LogHelper.Info("距离:"+d.ToString());
+                        if (IsOver == 1)
+                        {
+                            List<CardPoints> cardPoints = CardPointHelper.GetPoints();
+
+                            foreach (var item in cardPoints)
+                            {
+                                double d1= RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude)*1000;
+
+                                if (d1 < 10)
+                                {
+                                    PlayScore = PlayScore + 150;
+                                }
+                            }
+                        }
+
 
                         long FTime = runModel[i].pointTimestamp;
                         long STime = runModel[i+1].pointTimestamp;
@@ -114,7 +128,7 @@ namespace Edu.Web.API
 
                         double speed = (d  / cha);
 
-                        Edu.Tools.LogHelper.Info("速度:" + speed.ToString());
+                     
 
                         if (speed < 0.5 || speed > 7)
                         {
@@ -127,11 +141,11 @@ namespace Edu.Web.API
 
 
                     }
-                    return Json(new { R = true, Data = (Dis/1000).ToString("0.000") });
+                    return Json(new { R = true, Data = (Dis/1000).ToString("0.000"), PointScore = PlayScore });
                 }
                 else
                 {
-                    return Json(new { R = true, Data = 0 });
+                    return Json(new { R = true, Data = 0 , PointScore = 0});
                 }
 
             }
@@ -414,7 +428,10 @@ namespace Edu.Web.API
 
 
         }
-
+        /// <summary>
+        /// 提交跑步数据
+        /// </summary>
+        /// <returns></returns>
 
         [HttpPost]
         public IHttpActionResult ModyRun()
@@ -433,7 +450,7 @@ namespace Edu.Web.API
                 {
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
-                    runModel.RunScore = new int?(Convert.ToInt32(100.0 * num2));
+                    runModel.RunScore = new int?(Convert.ToInt32(100.0 * num2));                   
                     runModel.TotalScore = runModel.RunScore + runModel.PointScore;
                     int hour = Convert.ToDateTime(runModel.TotalTime).Hour;
                     int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
