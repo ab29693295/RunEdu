@@ -448,6 +448,14 @@ namespace Edu.Web.API
                 bool flag = userInfo != null && userInfo.Weight != null;
                 if (flag)
                 {
+                    string sql = @"SELECT SUM(PointScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+
+                    int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
+                    if (TodayPointCount > 600)
+                    {
+
+                    }
+
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
                     runModel.RunScore = new int?(Convert.ToInt32(100.0 * num2));                   
@@ -456,6 +464,8 @@ namespace Edu.Web.API
                     int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
                     int num3 = Convert.ToInt32(hour * 60 + minute);
                     runModel.Speed = new double?(Convert.ToDouble((double)num3 / num2));
+
+                    
                 }
                 runModel.CreateDate = new DateTime?(DateTime.Now);
                 this.unitOfWork.DRunning.Insert(runModel);
