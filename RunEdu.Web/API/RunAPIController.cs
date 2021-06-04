@@ -453,7 +453,7 @@ namespace Edu.Web.API
                     int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
                     if (TodayPointCount > 600)
                     {
-
+                        runModel.PointScore = 0;
                     }
 
                     double num = Convert.ToDouble(userInfo.Weight);
