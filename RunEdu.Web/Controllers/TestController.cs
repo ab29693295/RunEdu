@@ -12,7 +12,7 @@ namespace RunEdu.Web.Controllers
         // GET: Test
         public ActionResult Index()
         {
-
+           int a= Convert.ToInt32(100 * 0.035);
             Edu.Tools.LogHelper.Info("我想看看有没有日志！");
             return View();
         }

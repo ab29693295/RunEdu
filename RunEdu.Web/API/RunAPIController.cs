@@ -115,7 +115,7 @@ namespace Edu.Web.API
 
                                 if (d1 < 10)
                                 {
-                                    PlayScore = PlayScore + 150;
+                                    PlayScore = PlayScore + 10;
                                 }
                             }
                         }
@@ -451,15 +451,23 @@ namespace Edu.Web.API
                     string sql = @"SELECT SUM(PointScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
 
                     int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
-                    if (TodayPointCount > 600)
+                    if (TodayPointCount > 40)
                     {
                         runModel.PointScore = 0;
                     }
 
+                    string sqlRun = @"SELECT SUM(RunScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+
+                    int TodayRunCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
+                    if (TodayRunCount > 100)
+                    {
+                        runModel.RunScore = 0;
+                    }
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
-                    runModel.RunScore = new int?(Convert.ToInt32(100.0 * num2));                   
-                    runModel.TotalScore = runModel.RunScore + runModel.PointScore;
+                    int RunScore = Convert.ToInt32(10 * num2); 
+
+                    runModel.TotalScore = RunScore + runModel.PointScore;
                     int hour = Convert.ToDateTime(runModel.TotalTime).Hour;
                     int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
                     int num3 = Convert.ToInt32(hour * 60 + minute);
@@ -473,7 +481,8 @@ namespace Edu.Web.API
                 result = base.Json(new
                 {
                     R = true,
-                    M = "跑步信息添加成功！"
+                    M = "跑步信息添加成功！",
+                    Data=runModel
                 });
             }
             catch (Exception ex)
@@ -482,7 +491,8 @@ namespace Edu.Web.API
                 result = base.Json(new
                 {
                     R = false,
-                    M = "跑步信息添加失败！"
+                    M = "跑步信息添加失败！",
+                    Data = ""
                 });
             }
             return result;
