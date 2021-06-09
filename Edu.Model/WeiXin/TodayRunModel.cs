@@ -46,13 +46,14 @@ namespace Edu.Model
 
     public class RankModel
     {
-
+        public int TeamID { get; set; }
         public int RankID { get; set; }
         public int Totalkm { get; set; }
         public string NickName { get; set; }
         public string HeadPhoto { get; set; }
         public string TeamName { get; set; }
-        
+
+        public int Sex { get; set; }
 
 
     }

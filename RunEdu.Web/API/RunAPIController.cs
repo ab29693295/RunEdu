@@ -82,8 +82,87 @@ namespace Edu.Web.API
             return Json(new { R = true, HT=huating,LT=lanting,FG=fengge,MJ=mingjun,DateList= huodate });
         }
 
+
         [HttpPost]
-        public IHttpActionResult CountPoint(int IsOver=0)
+        public IHttpActionResult CountCardPoint()
+        {
+            try
+            {
+                Stream postData = HttpContext.Current.Request.InputStream;
+                StreamReader sRead = new StreamReader(postData);
+                string postContent = sRead.ReadToEnd();
+                sRead.Close();
+
+                int PlayScore = 0;
+
+                List<Points> runModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Points>>(postContent);
+                double Dis = 0;
+
+                if (runModel != null && runModel.Count() > 1)
+                {
+                    for (int i = 0; i < runModel.Count() - 1; i++)
+                    {
+
+
+                        double d = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, runModel[i + 1].latitude, runModel[i + 1].longitude);
+
+                      
+                            List<CardPoints> cardPoints = CardPointHelper.GetPoints();
+
+                            foreach (var item in cardPoints)
+                            {
+                                double d1 = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude) * 1000;
+
+                                if (d1 < 10)
+                                {
+                                    PlayScore = PlayScore + 10;
+                                }
+                            }
+                       
+
+
+                        long FTime = runModel[i].pointTimestamp;
+                        long STime = runModel[i + 1].pointTimestamp;
+
+                        double cha = (STime - FTime) / 1000;
+
+                        double speed = (d / cha);
+
+
+
+                        if (speed < 0.5 || speed > 7)
+                        {
+
+                        }
+                        else
+                        {
+                            Dis = Dis + d;
+                        }
+
+
+                    }
+                    return Json(new { R = true, Data = (Dis / 1000).ToString("0.000"), PointScore = PlayScore });
+                }
+                else
+                {
+                    return Json(new { R = true, Data = 0, PointScore = 0 });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Edu.Tools.LogHelper.Info(ex.ToString());
+
+                return Json(new { R = true, Data = 0 });
+            }
+
+
+
+
+        }
+
+        [HttpPost]
+        public IHttpActionResult CountPoint()
         {
             try
             {
@@ -105,22 +184,7 @@ namespace Edu.Web.API
            
                         double d = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, runModel[i + 1].latitude, runModel[i + 1].longitude);
 
-                        if (IsOver == 1)
-                        {
-                            List<CardPoints> cardPoints = CardPointHelper.GetPoints();
-
-                            foreach (var item in cardPoints)
-                            {
-                                double d1= RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude)*1000;
-
-                                if (d1 < 10)
-                                {
-                                    PlayScore = PlayScore + 10;
-                                }
-                            }
-                        }
-
-
+                      
                         long FTime = runModel[i].pointTimestamp;
                         long STime = runModel[i+1].pointTimestamp;
 
@@ -141,11 +205,11 @@ namespace Edu.Web.API
 
 
                     }
-                    return Json(new { R = true, Data = (Dis/1000).ToString("0.000"), PointScore = PlayScore });
+                    return Json(new { R = true, Data = (Dis/1000).ToString("0.000") });
                 }
                 else
                 {
-                    return Json(new { R = true, Data = 0 , PointScore = 0});
+                    return Json(new { R = true, Data = 0 });
                 }
 
             }
@@ -169,10 +233,10 @@ namespace Edu.Web.API
             IHttpActionResult result;
             try
             {
-                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID ";
+                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) AND A.TeamID=B.TeamID  and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID ";
                 string sql2 = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,C.TeamName from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE A.WXUserID='",
+                    "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID='",
                     WXUserID,
                     "' AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
@@ -206,7 +270,7 @@ namespace Edu.Web.API
             {
                 string sql = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID  AND A.TeamID=",
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID  AND A.TeamID=",
                     TeamID.ToString(),
                     " AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
@@ -214,7 +278,7 @@ namespace Edu.Web.API
                 });
                 string sql2 = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.WXUserID=B.WxID AND A.WXUserID='",
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE  A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.WXUserID='",
                     WXUserID,
                     "' AND A.TeamID=",
                     TeamID.ToString(),
@@ -403,7 +467,7 @@ namespace Edu.Web.API
 
                     minSpeedA = Convert.ToDouble(item.Speed);
 
-                    if (minSpeedB > minSpeedA)
+                    if (minSpeedB > minSpeedA&&minSpeedA!=0)
                     {
                         minSpeedB = minSpeedA;
                     }
@@ -443,35 +507,43 @@ namespace Edu.Web.API
                 StreamReader streamReader = new StreamReader(inputStream);
                 string value = streamReader.ReadToEnd();
                 streamReader.Close();
+                Edu.Tools.LogHelper.Info("value:" + value.ToString());
+
                 Running runModel = JsonConvert.DeserializeObject<Running>(value);
+
+                Edu.Tools.LogHelper.Info("看看执行这步没有:" + value.ToString());
                 UserInfo userInfo = this.unitOfWork.DUserInfo.Get((UserInfo p) => p.WxID == runModel.WXUserID, null, "").FirstOrDefault<UserInfo>();
                 bool flag = userInfo != null && userInfo.Weight != null;
                 if (flag)
                 {
-                    string sql = @"SELECT SUM(PointScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
 
-                    int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
-                    if (TodayPointCount > 40)
-                    {
-                        runModel.PointScore = 0;
-                    }
+                    int pointScore = 0;
+                    //string sql = @"SELECT SUM(PointScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
 
-                    string sqlRun = @"SELECT SUM(RunScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+                    //int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
+                    //if (TodayPointCount > 40)
+                    //{
+                    //    runModel.PointScore = 0;
+                    //}
 
-                    int TodayRunCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
-                    if (TodayRunCount > 100)
-                    {
-                        runModel.RunScore = 0;
-                    }
+                    //string sqlRun = @"SELECT SUM(RunScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+
+                    //int TodayRunCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
+                    //if (TodayRunCount > 100)
+                    //{
+                    //    runModel.RunScore = 0;
+                    //}
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
-                    int RunScore = Convert.ToInt32(10 * num2); 
-
+                    int RunScore =0+Convert.ToInt32(10 * num2);
+                    Edu.Tools.LogHelper.Info("RunScore:" + RunScore.ToString());
+                    runModel.RunScore = RunScore;
+                    Edu.Tools.LogHelper.Info("runModel.PointScore:" + runModel.PointScore.ToString());
                     runModel.TotalScore = RunScore + runModel.PointScore;
                     int hour = Convert.ToDateTime(runModel.TotalTime).Hour;
                     int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
                     int num3 = Convert.ToInt32(hour * 60 + minute);
-                    runModel.Speed = new double?(Convert.ToDouble((double)num3 / num2));
+                    runModel.Speed = Convert.ToDouble((double)num3 / num2);
 
                     
                 }
