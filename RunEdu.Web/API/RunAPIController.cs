@@ -87,14 +87,15 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m.%d') as gptime fr
             }
             else if (DayCount == 90)
             {
-                sql = @"SELECT  DATE_FORMAT(Tb1.date,'%m.%d') as m,IFNULL(Tb2.m,'0') as T1Count,IFNULL(Tb3.m,'0') as T2Count,IFNULL(Tb4.m,'0') as T3Count,IFNULL(Tb5.m,'0') as T4Count
+                sql = @"SELECT  DATE_FORMAT(Tb1.date,'%m') as m,IFNULL(Tb2.m,'0') as T1Count,IFNULL(Tb3.m,'0') as T2Count,IFNULL(Tb4.m,'0') as T3Count,IFNULL(Tb5.m,'0') as T4Count
 FROM 
-(SELECT  date_sub(CURDATE(),interval @i:=@i+1 day) as date 
-from ( select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 ) as tmp,(select @i:= -1) t) as Tb1
-LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af2.CreateDate,'%m.%d') as gptime from running as af2 where af2.TeamID=1 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af2.CreateDate)  GROUP BY gptime)  as Tb2  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb2.gptime
-LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af3.CreateDate,'%m.%d') as gptime from running as af3 where af3.TeamID=2 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af3.CreateDate)  GROUP BY gptime)  as Tb3  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb3.gptime   
-LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af4.CreateDate,'%m.%d') as gptime from running as af4 where af4.TeamID=3 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af4.CreateDate)  GROUP BY gptime)  as Tb4  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb4.gptime  
-LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m.%d') as gptime from running as af5 where af5.TeamID=4 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af5.CreateDate)  GROUP BY gptime)  as Tb5  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb5.gptime ORDER BY m   desc
+(SELECT  date_sub(CURDATE(),interval @i:=@i+1 month) as date 
+from ( select 1 union all select 1 union all select 1  ) as tmp,(select @i:= -1) t) as Tb1
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af2.CreateDate,'%m') as gptime from running as af2 where af2.TeamID=1 and DATE_SUB(CURDATE(), INTERVAL 3   MONTH) <= date(af2.CreateDate)  GROUP BY gptime)  as Tb2  ON DATE_FORMAT(Tb1.date,'%m')=Tb2.gptime
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af3.CreateDate,'%m') as gptime from running as af3 where af3.TeamID=2 and DATE_SUB(CURDATE(), INTERVAL 3   MONTH) <= date(af3.CreateDate)  GROUP BY gptime)  as Tb3  ON DATE_FORMAT(Tb1.date,'%m')=Tb3.gptime   
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af4.CreateDate,'%m') as gptime from running as af4 where af4.TeamID=3 and DATE_SUB(CURDATE(), INTERVAL 3   MONTH) <= date(af4.CreateDate)  GROUP BY gptime)  as Tb4  ON DATE_FORMAT(Tb1.date,'%m')=Tb4.gptime  
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from running as af5 where af5.TeamID=4 and DATE_SUB(CURDATE(), INTERVAL 3   MONTH) <= date(af5.CreateDate)  GROUP BY gptime)  as Tb5  ON DATE_FORMAT(Tb1.date,'%m')=Tb5.gptime ORDER BY m   desc
+
 ";
             }
 
