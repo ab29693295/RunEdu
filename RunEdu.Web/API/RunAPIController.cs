@@ -65,7 +65,38 @@ namespace Edu.Web.API
             ast.show = "false";
 
 
-            string sql = @"SELECT DATE_FORMAT(CreateDate,'%m.%d') as m,(SELECT COUNT(*) FROM running WHERE TeamID=1 AND DATE_SUB(CURDATE(), INTERVAL  " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T1Count,(SELECT COUNT(*) FROM running WHERE TeamID=2 AND DATE_SUB(CURDATE(), INTERVAL  "+ DayCount.ToString()+ "  DAY) <= date(CreateDate)) as T2Count,(SELECT COUNT(*) FROM running WHERE TeamID=3 AND DATE_SUB(CURDATE(), INTERVAL   " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T3Count,(SELECT COUNT(*) FROM running WHERE TeamID=4  AND DATE_SUB(CURDATE(), INTERVAL   " + DayCount.ToString() + "  DAY) <= date(CreateDate)) as T4Count from running  WHERE DATE_SUB(CURDATE(), INTERVAL    " + DayCount.ToString() + "  DAY) <= date(CreateDate) GROUP BY m";
+            string sql = @"SELECT  DATE_FORMAT(Tb1.date,'%m.%d') as m,IFNULL(Tb2.m,'0') as T1Count,IFNULL(Tb3.m,'0') as T2Count,IFNULL(Tb4.m,'0') as T3Count,IFNULL(Tb5.m,'0') as T4Count
+FROM 
+(SELECT  date_sub(CURDATE(),interval @i:=@i+1 day) as date 
+from ( select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  ) as tmp,(select @i:= -1) t) as Tb1
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af2.CreateDate,'%m.%d') as gptime from running as af2 where af2.TeamID=1 and DATE_SUB(CURDATE(), INTERVAL 7   DAY) <= date(af2.CreateDate)  GROUP BY gptime)  as Tb2  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb2.gptime
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af3.CreateDate,'%m.%d') as gptime from running as af3 where af3.TeamID=2 and DATE_SUB(CURDATE(), INTERVAL 7   DAY) <= date(af3.CreateDate)  GROUP BY gptime)  as Tb3  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb3.gptime   
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af4.CreateDate,'%m.%d') as gptime from running as af4 where af4.TeamID=3 and DATE_SUB(CURDATE(), INTERVAL 7   DAY) <= date(af4.CreateDate)  GROUP BY gptime)  as Tb4  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb4.gptime  
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m.%d') as gptime from running as af5 where af5.TeamID=4 and DATE_SUB(CURDATE(), INTERVAL 7   DAY) <= date(af5.CreateDate)  GROUP BY gptime)  as Tb5  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb5.gptime ORDER BY m   desc";
+
+            if (DayCount == 30)
+            {
+                sql = @"SELECT  DATE_FORMAT(Tb1.date,'%m.%d') as m,IFNULL(Tb2.m,'0') as T1Count,IFNULL(Tb3.m,'0') as T2Count,IFNULL(Tb4.m,'0') as T3Count,IFNULL(Tb5.m,'0') as T4Count
+FROM 
+(SELECT  date_sub(CURDATE(),interval @i:=@i+1 day) as date 
+from ( select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  ) as tmp,(select @i:= -1) t) as Tb1
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af2.CreateDate,'%m.%d') as gptime from running as af2 where af2.TeamID=1 and DATE_SUB(CURDATE(), INTERVAL 30   DAY) <= date(af2.CreateDate)  GROUP BY gptime)  as Tb2  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb2.gptime
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af3.CreateDate,'%m.%d') as gptime from running as af3 where af3.TeamID=2 and DATE_SUB(CURDATE(), INTERVAL 30   DAY) <= date(af3.CreateDate)  GROUP BY gptime)  as Tb3  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb3.gptime   
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af4.CreateDate,'%m.%d') as gptime from running as af4 where af4.TeamID=3 and DATE_SUB(CURDATE(), INTERVAL 30   DAY) <= date(af4.CreateDate)  GROUP BY gptime)  as Tb4  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb4.gptime  
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m.%d') as gptime from running as af5 where af5.TeamID=4 and DATE_SUB(CURDATE(), INTERVAL 30   DAY) <= date(af5.CreateDate)  GROUP BY gptime)  as Tb5  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb5.gptime ORDER BY m   desc";
+            }
+            else if (DayCount == 90)
+            {
+                sql = @"SELECT  DATE_FORMAT(Tb1.date,'%m.%d') as m,IFNULL(Tb2.m,'0') as T1Count,IFNULL(Tb3.m,'0') as T2Count,IFNULL(Tb4.m,'0') as T3Count,IFNULL(Tb5.m,'0') as T4Count
+FROM 
+(SELECT  date_sub(CURDATE(),interval @i:=@i+1 day) as date 
+from ( select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1  union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 ) as tmp,(select @i:= -1) t) as Tb1
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af2.CreateDate,'%m.%d') as gptime from running as af2 where af2.TeamID=1 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af2.CreateDate)  GROUP BY gptime)  as Tb2  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb2.gptime
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af3.CreateDate,'%m.%d') as gptime from running as af3 where af3.TeamID=2 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af3.CreateDate)  GROUP BY gptime)  as Tb3  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb3.gptime   
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af4.CreateDate,'%m.%d') as gptime from running as af4 where af4.TeamID=3 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af4.CreateDate)  GROUP BY gptime)  as Tb4  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb4.gptime  
+LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m.%d') as gptime from running as af5 where af5.TeamID=4 and DATE_SUB(CURDATE(), INTERVAL 90   DAY) <= date(af5.CreateDate)  GROUP BY gptime)  as Tb5  ON DATE_FORMAT(Tb1.date,'%m.%d')=Tb5.gptime ORDER BY m   desc
+";
+            }
 
             var data = this.unitOfWork.context.Database.SqlQuery<HuoSqlModel>(sql, new object[0]).ToList();
             if (data != null && data.Count() > 0)
@@ -272,7 +303,7 @@ namespace Edu.Web.API
                 {
                     "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.TeamID=",
                     TeamID.ToString(),
-                    " AND  DATE_SUB(CURDATE(), INTERVAL ",
+                    " AND A.TeamID=c.ID  AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
                     "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
                 });
@@ -282,7 +313,7 @@ namespace Edu.Web.API
                     WXUserID,
                     "' AND A.TeamID=",
                     TeamID.ToString(),
-                    " AND  DATE_SUB(CURDATE(), INTERVAL ",
+                    " AND A.TeamID=c.ID AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
                     "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
                 });
