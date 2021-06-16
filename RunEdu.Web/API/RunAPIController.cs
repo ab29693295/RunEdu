@@ -270,7 +270,7 @@ namespace Edu.Web.API
             {
                 string sql = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID  AND A.TeamID=",
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.TeamID=",
                     TeamID.ToString(),
                     " AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
@@ -278,7 +278,7 @@ namespace Edu.Web.API
                 });
                 string sql2 = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE  A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.WXUserID='",
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE  A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.WXUserID='",
                     WXUserID,
                     "' AND A.TeamID=",
                     TeamID.ToString(),
