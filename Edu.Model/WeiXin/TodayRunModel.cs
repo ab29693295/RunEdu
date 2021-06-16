@@ -24,6 +24,8 @@ namespace Edu.Model
 
     public class TeamRunModel
     {
+        public string WXUserID { get; set; }
+
         public int RankID
         {
             get;
@@ -46,6 +48,7 @@ namespace Edu.Model
 
     public class RankModel
     {
+        public string WXUserID { get; set; }
         public int TeamID { get; set; }
         public int RankID { get; set; }
         public decimal Totalkm { get; set; }

@@ -265,17 +265,10 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
             IHttpActionResult result;
             try
             {
-                string sql = "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE  DATE_SUB(CURDATE(), INTERVAL " + DayCount.ToString() + " DAY) <= date(A.CreateDate) AND A.TeamID=B.TeamID  and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID ";
-                string sql2 = string.Concat(new string[]
-                {
-                    "SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID='",
-                    WXUserID,
-                    "' AND  DATE_SUB(CURDATE(), INTERVAL ",
-                    DayCount.ToString(),
-                    " DAY) <= date(A.CreateDate) and A.WXUserID=B.WxID and A.TeamID = C.ID GROUP BY WXUserID "
-                });
+                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,A.WXUserID,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,B.TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C WHERE  DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= date(A.CreateDate) AND  A.WXUserID=B.WxID AND A.TeamID=C.ID  GROUP BY WXUserID ";
+             
                var data = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql, new object[0]);
-               var personData = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql2, new object[0]);
+               var personData = data.Where(p=>p.WXUserID==WXUserID);
                 result = base.Json(new
                 {
                     R = true,
@@ -302,24 +295,15 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
             {
                 string sql = string.Concat(new string[]
                 {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.TeamID=",
+                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,A.WXUserID,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.TeamID=",
                     TeamID.ToString(),
                     " AND A.TeamID=c.ID  AND  DATE_SUB(CURDATE(), INTERVAL ",
                     DayCount.ToString(),
                     "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
                 });
-                string sql2 = string.Concat(new string[]
-                {
-                    "SELECT @rownum:= @rownum + 1 as RankID,  SUM(Totalkm) as Totalkm,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID as TeamID from  (select @rownum:= 0) d, running as A ,userinfo as B,team as C  WHERE  A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.WXUserID='",
-                    WXUserID,
-                    "' AND A.TeamID=",
-                    TeamID.ToString(),
-                    " AND A.TeamID=c.ID AND  DATE_SUB(CURDATE(), INTERVAL ",
-                    DayCount.ToString(),
-                    "   DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC"
-                });
+              
                 List<TeamRunModel> data = this.unitOfWork.context.Database.SqlQuery<TeamRunModel>(sql, new object[0]).ToList<TeamRunModel>();
-                List<TeamRunModel> personData = this.unitOfWork.context.Database.SqlQuery<TeamRunModel>(sql2, new object[0]).ToList<TeamRunModel>();
+                List<TeamRunModel> personData = data.Where(p=>p.WXUserID==WXUserID).ToList();
                 result = base.Json(new
                 {
                     R = true,
