@@ -145,7 +145,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                             {
                                 double d1 = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude) * 1000;
 
-                                if (d1 < 10)
+                                if (d1 < 60)
                                 {
                                     PlayScore = PlayScore + 10;
                                 }
