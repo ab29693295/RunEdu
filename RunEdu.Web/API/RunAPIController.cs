@@ -293,6 +293,8 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
             IHttpActionResult result;
             try
             {
+
+
                 string sql = string.Concat(new string[]
                 {
                     "SELECT @rownum:= @rownum + 1 as RankID,  E.Totalkm,E.WXUserID,E.NickName,E.HeadPhoto,E.Sex,E.TeamName,E.TeamID from (SELECT  SUM(Totalkm) as Totalkm,A.WXUserID,B.NickName,B.HeadPhoto,B.Sex,C.TeamName,C.ID  as TeamID from running as A ,userinfo as B,team as C  WHERE A.TeamID=B.TeamID AND A.WXUserID=B.WxID AND A.TeamID = C.ID  AND A.TeamID="+TeamID.ToString()+"  AND A.TeamID=c.ID  AND  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate)  GROUP BY A.WXUserID  ORDER BY Totalkm DESC) E, (select @rownum:= 0) d"
