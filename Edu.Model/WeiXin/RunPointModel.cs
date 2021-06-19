@@ -44,6 +44,8 @@ namespace Edu.Model.WeiXin
         public static CardPoints cdPoints1 = new CardPoints();
         public static CardPoints cdPoints2 = new CardPoints();
         public static CardPoints cdPoints3 = new CardPoints();
+        public static CardPoints cdPoints4 = new CardPoints();
+        public static CardPoints cdPoints5 = new CardPoints();
         public static List<CardPoints> GetPoints()
         {
             List<CardPoints> listPoints = new List<CardPoints>();
@@ -60,11 +62,19 @@ namespace Edu.Model.WeiXin
             cdPoints3.latitude = 117.749254;
             cdPoints3.longitude = 39.116767;
 
+            cdPoints4.latitude = 116.185881;
+            cdPoints4.longitude = 39.903828;
+
+            cdPoints5.latitude = 116.184545;
+            cdPoints5.longitude = 39.903802;
+
             listPoints.Add(cdPoints);
 
             listPoints.Add(cdPoints1);
             listPoints.Add(cdPoints2);
             listPoints.Add(cdPoints3);
+            listPoints.Add(cdPoints4);
+            listPoints.Add(cdPoints5);
 
             return listPoints;
         }
