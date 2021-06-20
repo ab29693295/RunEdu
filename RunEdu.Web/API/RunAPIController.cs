@@ -194,6 +194,12 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
 
 
                     }
+
+                    if (PlayScore > 40)
+                    {
+                        PlayScore = 40;
+                    }
+
                     return Json(new { R = true, Data = (Dis / 1000).ToString("0.000"), PointScore = PlayScore });
                 }
                 else
