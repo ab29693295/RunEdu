@@ -18,6 +18,15 @@ namespace Edu.Web.API
 {
     public class RunAPIController : BaseAPIController
     {
+
+        [HttpGet]
+        public IHttpActionResult GetTotalSocre(string WXUserID)
+        {
+            var run = unitOfWork.DScore.Get(p => p.WXUserID == WXUserID).FirstOrDefault();
+
+
+            return Json(new { R = true, Data = run });
+        }
         [HttpGet]
         public IHttpActionResult GetSocreRank(string WXUserID)
         {
@@ -620,6 +629,29 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                         scoreRank.CreateDate = Convert.ToDateTime(DateTime.Now.ToShortDateString());
                         this.unitOfWork.DScoreRank.Insert(scoreRank);
                         this.unitOfWork.Save();
+                    }
+                    int totalScore = pointScore + RunScore;
+                    if (totalScore > 0)
+                    {
+                        var score = unitOfWork.DScore.Get(p => p.WXUserID == runModel.WXUserID).FirstOrDefault();
+                        if (score != null)
+                        {
+                            score.TotalScore = score.TotalScore + totalScore;
+
+                            this.unitOfWork.DScore.Update(score);
+                            this.unitOfWork.Save();
+                        }
+                        else
+                        {
+                            Score _score = new Score();
+                            _score.WXUserID = runModel.WXUserID;
+
+                            _score.TotalScore = pointScore;
+                            _score.CreatDate = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                            this.unitOfWork.DScore.Insert(_score);
+                            this.unitOfWork.Save();
+                        }
+                       
                     }
 
                 }

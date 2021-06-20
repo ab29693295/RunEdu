@@ -34,11 +34,11 @@ namespace Edu.Entity
         /// </summary>
         public System.String UserName { get { return this._UserName; } set { this._UserName = value; } }
 
-        private System.String _TotalScore;
+        private System.Int32? _TotalScore;
         /// <summary>
         /// 
         /// </summary>
-        public System.String TotalScore { get { return this._TotalScore; } set { this._TotalScore = value; } }
+        public System.Int32? TotalScore { get { return this._TotalScore; } set { this._TotalScore = value; } }
 
         private System.String _TypeName;
         /// <summary>

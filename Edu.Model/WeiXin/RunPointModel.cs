@@ -69,15 +69,15 @@ namespace Edu.Model.WeiXin
             cdPoints4.latitude = 39.903828;
             cdPoints4.longitude = 116.185881;
 
-            cdPoints5.latitude =   39.903802;
-            cdPoints5.longitude = 116.184545;
+            cdPoints5.latitude =   39.88974380493164;
+            cdPoints5.longitude = 116.63700103759766;
 
 
             cdPoints6.latitude = 40.066759;
             cdPoints6.longitude = 116.334928;
 
-            cdPoints7.latitude = 116.636894;
-            cdPoints7.longitude = 39.890224;
+            cdPoints7.latitude = 116.35884094238281;
+            cdPoints7.longitude = 40.06071090698242;
 
             //39.890224,116.636894
             //116.334942,40.066759
