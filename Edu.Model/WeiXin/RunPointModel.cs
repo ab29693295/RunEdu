@@ -89,11 +89,11 @@ namespace Edu.Model.WeiXin
 
             listPoints.Add(cdPoints);
 
-            //listPoints.Add(cdPoints1);
-            //listPoints.Add(cdPoints2);
-            //listPoints.Add(cdPoints3);
-            //listPoints.Add(cdPoints4);
-            //listPoints.Add(cdPoints5);
+            listPoints.Add(cdPoints1);
+            listPoints.Add(cdPoints2);
+            listPoints.Add(cdPoints3);
+            listPoints.Add(cdPoints4);
+            listPoints.Add(cdPoints5);
             listPoints.Add(cdPoints6);
             listPoints.Add(cdPoints7);
 
