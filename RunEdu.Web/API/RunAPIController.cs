@@ -538,6 +538,17 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
             IHttpActionResult result;
             try
             {
+
+                // 查询当天数据
+                string time = DateTime.Now.ToShortDateString();
+
+
+                DateTime time1 = Convert.ToDateTime(time + " 0:00:00");  // 数字前 记得 加空格
+
+
+                DateTime time2 = Convert.ToDateTime(time + " 23:59:59");
+
+
                 Stream inputStream = HttpContext.Current.Request.InputStream;
                 StreamReader streamReader = new StreamReader(inputStream);
                 string value = streamReader.ReadToEnd();
@@ -546,57 +557,59 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
 
                 Running runModel = JsonConvert.DeserializeObject<Running>(value);
 
-                Edu.Tools.LogHelper.Info("看看执行这步没有:" + value.ToString());
+                
                 UserInfo userInfo = this.unitOfWork.DUserInfo.Get((UserInfo p) => p.WxID == runModel.WXUserID, null, "").FirstOrDefault<UserInfo>();
                 bool flag = userInfo != null && userInfo.Weight != null;
                 if (flag)
                 {
 
+                   
                     int pointScore =Convert.ToInt32( runModel.PointScore);
-                    string sql = @"SELECT SUM(PointScore) as PointScore FROM running WHERE WXUserID='oDyWN5N5fgS9i62xi4eEscCjenzg' and year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
-
-                    var TodayPointCount = this.unitOfWork.context.Database.SqlQuery<PointScoreModel>(sql, new object[0]);
-                    if (TodayPointCount != null && TodayPointCount.Count() > 0)
+             
+                    int TodayPointCount =Convert.ToInt32( unitOfWork.DRunning.Get(p => p.CreateDate>time1&&p.CreateDate<time2&&p.WXUserID==runModel.WXUserID).Sum(p=>p.PointScore));
+                    if (TodayPointCount > 0 )
                     {
-                        int tCount = TodayPointCount.FirstOrDefault().PointScore;
-                        if (tCount >= 40)
-                        {
-                            pointScore = 0;
-                        }
+                      
+                          
+                            if (TodayPointCount >= 40)
+                            {
+                                pointScore = 0;
+                            }
 
-                        if (pointScore + tCount > 100 && tCount < 40)
-                        {
-                            pointScore = 40 - tCount;
-                        }
+                            if (pointScore + TodayPointCount > 100 && TodayPointCount < 40)
+                            {
+                                pointScore = 40 - TodayPointCount;
+                            }
+                       
+                       
                     }
 
 
-
+                 
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
                     int RunScore = 0 + Convert.ToInt32(10 * num2);
 
-                    string sqlRun = @"SELECT SUM(RunScore) as RunScore FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+                  
+                    int TodayRunCount = Convert.ToInt32(unitOfWork.DRunning.Get(p => p.CreateDate > time1 && p.CreateDate < time2 && p.WXUserID == runModel.WXUserID).Sum(p => p.RunScore));
+               
 
-                    var TodayRunCount = this.unitOfWork.context.Database.SqlQuery<RunScoreModel>(sql, new object[0]);
-
-                    if (TodayRunCount != null && TodayRunCount.Count() > 0)
+                    if (TodayRunCount>0)
                     {
-                        int tCount = TodayRunCount.FirstOrDefault().RunScore;
-                        if (tCount >= 100)
-                        {
-                            RunScore = 0;
-                        }
-                        if (RunScore + tCount > 100 && tCount < 100)
-                        {
-                            RunScore = 100 - tCount;
-                        }
+                       
+                         
+                            if (TodayRunCount >= 100)
+                            {
+                                RunScore = 0;
+                            }
+                            if (RunScore + TodayRunCount > 100 && TodayRunCount < 100)
+                            {
+                                RunScore = 100 - TodayRunCount;
+                            }
+                       
                     }
-                   
 
 
-                
-                   
                     runModel.RunScore = RunScore;
                     runModel.PointScore = pointScore;
                   
@@ -619,6 +632,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                         this.unitOfWork.Save();
                     }
 
+                  
                     if (pointScore > 0)
                     {
                         ScoreRank scoreRank = new ScoreRank();
@@ -630,6 +644,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                         this.unitOfWork.DScoreRank.Insert(scoreRank);
                         this.unitOfWork.Save();
                     }
+                  
                     int totalScore = pointScore + RunScore;
                     if (totalScore > 0)
                     {
@@ -653,6 +668,9 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                         }
                        
                     }
+
+                  
+
 
                 }
                 runModel.CreateDate = new DateTime?(DateTime.Now);
