@@ -19,6 +19,16 @@ namespace Edu.Web.API
     public class RunAPIController : BaseAPIController
     {
         [HttpGet]
+        public IHttpActionResult GetSocreRank(string WXUserID)
+        {
+            var run = unitOfWork.DScoreRank.Get(p=>p.WXUserID==WXUserID);
+
+
+            return Json(new { R = true, Data = run });
+        }
+
+
+        [HttpGet]
         public IHttpActionResult GetHuoYue(int DayCount)
         {
             emphasis em = new emphasis();
@@ -128,6 +138,8 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                 int PlayScore = 0;
 
                 List<Points> runModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Points>>(postContent);
+
+                Edu.Tools.LogHelper.Info("跑步数据列表："+postContent);
                 double Dis = 0;
 
                 if (runModel != null && runModel.Count() > 1)
@@ -143,7 +155,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
 
                             foreach (var item in cardPoints)
                             {
-                                double d1 = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude) * 1000;
+                                double d1 = RunHelper.GetDistance(runModel[i].latitude, runModel[i].longitude, item.latitude, item.longitude);
 
                                 if (d1 < 60)
                                 {
@@ -531,39 +543,94 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                 if (flag)
                 {
 
-                    int pointScore = 0;
-                    //string sql = @"SELECT SUM(PointScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+                    int pointScore =Convert.ToInt32( runModel.PointScore);
+                    string sql = @"SELECT SUM(PointScore) as PointScore FROM running WHERE WXUserID='oDyWN5N5fgS9i62xi4eEscCjenzg' and year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
 
-                    //int TodayPointCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
-                    //if (TodayPointCount > 40)
-                    //{
-                    //    runModel.PointScore = 0;
-                    //}
+                    var TodayPointCount = this.unitOfWork.context.Database.SqlQuery<PointScoreModel>(sql, new object[0]);
+                    if (TodayPointCount != null && TodayPointCount.Count() > 0)
+                    {
+                        int tCount = TodayPointCount.FirstOrDefault().PointScore;
+                        if (tCount >= 40)
+                        {
+                            pointScore = 0;
+                        }
 
-                    //string sqlRun = @"SELECT SUM(RunScore) FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+                        if (pointScore + tCount > 100 && tCount < 40)
+                        {
+                            pointScore = 40 - tCount;
+                        }
+                    }
 
-                    //int TodayRunCount = Convert.ToInt32(this.unitOfWork.context.Database.SqlQuery<int>(sql, new object[0]));
-                    //if (TodayRunCount > 100)
-                    //{
-                    //    runModel.RunScore = 0;
-                    //}
+
+
                     double num = Convert.ToDouble(userInfo.Weight);
                     double num2 = Convert.ToDouble(runModel.Totalkm);
-                    int RunScore =0+Convert.ToInt32(10 * num2);
-                    Edu.Tools.LogHelper.Info("RunScore:" + RunScore.ToString());
+                    int RunScore = 0 + Convert.ToInt32(10 * num2);
+
+                    string sqlRun = @"SELECT SUM(RunScore) as RunScore FROM running WHERE WXUserID='" + runModel.WXUserID + "'  year(CreateDate)=year(now()) and month(CreateDate) = month(now()) and day(CreateDate) = day(now())";
+
+                    var TodayRunCount = this.unitOfWork.context.Database.SqlQuery<RunScoreModel>(sql, new object[0]);
+
+                    if (TodayRunCount != null && TodayRunCount.Count() > 0)
+                    {
+                        int tCount = TodayRunCount.FirstOrDefault().RunScore;
+                        if (tCount >= 100)
+                        {
+                            RunScore = 0;
+                        }
+                        if (RunScore + tCount > 100 && tCount < 100)
+                        {
+                            RunScore = 100 - tCount;
+                        }
+                    }
+                   
+
+
+                
+                   
                     runModel.RunScore = RunScore;
-                    Edu.Tools.LogHelper.Info("runModel.PointScore:" + runModel.PointScore.ToString());
-                    runModel.TotalScore = RunScore + runModel.PointScore;
+                    runModel.PointScore = pointScore;
+                  
+                    runModel.TotalScore = RunScore + pointScore;
                     int hour = Convert.ToDateTime(runModel.TotalTime).Hour;
                     int minute = Convert.ToDateTime(runModel.TotalTime).Minute;
                     int num3 = Convert.ToInt32(hour * 60 + minute);
                     runModel.Speed = Convert.ToDouble((double)num3 / num2);
 
-                    
+
+                    if (RunScore > 0)
+                    {
+                        ScoreRank scoreRank = new ScoreRank();
+                        scoreRank.WXUserID = runModel.WXUserID;
+                        scoreRank.RunTypeID = 1;
+                        scoreRank.RunTypeName = "跑步获取";
+                        scoreRank.Score = RunScore;
+                        scoreRank.CreateDate =Convert.ToDateTime( DateTime.Now.ToShortDateString());
+                        this.unitOfWork.DScoreRank.Insert(scoreRank);
+                        this.unitOfWork.Save();
+                    }
+
+                    if (pointScore > 0)
+                    {
+                        ScoreRank scoreRank = new ScoreRank();
+                        scoreRank.WXUserID = runModel.WXUserID;
+                        scoreRank.RunTypeID = 1;
+                        scoreRank.RunTypeName = "节点打卡";
+                        scoreRank.Score = pointScore;
+                        scoreRank.CreateDate = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+                        this.unitOfWork.DScoreRank.Insert(scoreRank);
+                        this.unitOfWork.Save();
+                    }
+
                 }
                 runModel.CreateDate = new DateTime?(DateTime.Now);
                 this.unitOfWork.DRunning.Insert(runModel);
                 this.unitOfWork.Save();
+
+              
+
+
+
                 result = base.Json(new
                 {
                     R = true,

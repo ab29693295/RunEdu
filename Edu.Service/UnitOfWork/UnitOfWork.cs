@@ -78,6 +78,20 @@ namespace Edu.Service
             }
         }
 
+        private DScoreRank _DScoreRank;
+
+        public DScoreRank DScoreRank
+        {
+            get
+            {
+                if (this._DScoreRank == null)
+                {
+                    this._DScoreRank = new DScoreRank(context);
+                }
+                return _DScoreRank;
+            }
+        }
+
         private DTeam _DTeam;
       
         public DTeam DTeam

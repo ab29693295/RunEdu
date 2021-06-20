@@ -60,4 +60,22 @@ namespace Edu.Model
 
 
     }
+
+
+    public class PointScoreModel
+    {
+
+        public int PointScore { get; set; }
+
+
+
+    }
+    public class RunScoreModel
+    {
+      
+        public int RunScore { get; set; }
+       
+
+
+    }
 }

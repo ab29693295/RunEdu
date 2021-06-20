@@ -46,35 +46,56 @@ namespace Edu.Model.WeiXin
         public static CardPoints cdPoints3 = new CardPoints();
         public static CardPoints cdPoints4 = new CardPoints();
         public static CardPoints cdPoints5 = new CardPoints();
+
+        public static CardPoints cdPoints6 = new CardPoints();
+
+        public static CardPoints cdPoints7 = new CardPoints();
         public static List<CardPoints> GetPoints()
         {
             List<CardPoints> listPoints = new List<CardPoints>();
-            cdPoints.latitude = 117.749584;
-            cdPoints.longitude = 39.117407;
+            cdPoints.latitude =  39.117407;
+            cdPoints.longitude = 117.749584;
 
-            cdPoints1.latitude = 117.749347;
-            cdPoints1.longitude = 39.117657;
+            cdPoints1.latitude =   39.117657;
+            cdPoints1.longitude = 117.749347;
 
 
-            cdPoints2.latitude = 117.749593;
-            cdPoints2.longitude = 39.116971;
+            cdPoints2.latitude =  39.116971;
+            cdPoints2.longitude = 117.749593;
 
-            cdPoints3.latitude = 117.749254;
-            cdPoints3.longitude = 39.116767;
+            cdPoints3.latitude = 39.116767;
+            cdPoints3.longitude = 117.749254;
 
-            cdPoints4.latitude = 116.185881;
-            cdPoints4.longitude = 39.903828;
+            cdPoints4.latitude = 39.903828;
+            cdPoints4.longitude = 116.185881;
 
-            cdPoints5.latitude = 116.184545;
-            cdPoints5.longitude = 39.903802;
+            cdPoints5.latitude =   39.903802;
+            cdPoints5.longitude = 116.184545;
+
+
+            cdPoints6.latitude = 40.066759;
+            cdPoints6.longitude = 116.334928;
+
+            cdPoints7.latitude = 116.636894;
+            cdPoints7.longitude = 39.890224;
+
+            //39.890224,116.636894
+            //116.334942,40.066759
+
+            // 116.334928,40.066759  百度坐标
+
+            //116.3284683227539,40.06093978881836 腾讯坐标
+
 
             listPoints.Add(cdPoints);
 
-            listPoints.Add(cdPoints1);
-            listPoints.Add(cdPoints2);
-            listPoints.Add(cdPoints3);
-            listPoints.Add(cdPoints4);
-            listPoints.Add(cdPoints5);
+            //listPoints.Add(cdPoints1);
+            //listPoints.Add(cdPoints2);
+            //listPoints.Add(cdPoints3);
+            //listPoints.Add(cdPoints4);
+            //listPoints.Add(cdPoints5);
+            listPoints.Add(cdPoints6);
+            listPoints.Add(cdPoints7);
 
             return listPoints;
         }

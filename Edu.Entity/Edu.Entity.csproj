@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\EduContext.cs" />
+    <Compile Include="Entity\ScoreRank.cs" />
     <Compile Include="Entity\TeamUser.cs" />
     <Compile Include="Entity\LogInfo.cs" />
     <Compile Include="Entity\Running.cs" />

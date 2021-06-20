@@ -19,7 +19,8 @@ namespace Edu.Entity
         public virtual DbSet<Running> Running { get; set; }
         public virtual DbSet<RunPoint> RunPoint { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
- 
+        public virtual DbSet<ScoreRank> ScoreRank { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
