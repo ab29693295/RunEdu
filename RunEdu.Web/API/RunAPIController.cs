@@ -172,10 +172,14 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                             {
 
 
+                                if (item.status != 1)
+                                {
+                                    PlayScore = PlayScore + 10;
+                                    item.status = 1;
+                                }
+                               
 
-                                PlayScore = PlayScore + 10;
 
-                                cardPoints.Remove(item);
                             }
 
                         }

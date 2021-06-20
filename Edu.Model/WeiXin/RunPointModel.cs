@@ -32,6 +32,8 @@ namespace Edu.Model.WeiXin
 
         public double longitude { get; set; }
 
+        public int status { get; set; }
+
     }
     /// <summary>
     /// 
@@ -55,29 +57,36 @@ namespace Edu.Model.WeiXin
             List<CardPoints> listPoints = new List<CardPoints>();
             cdPoints.latitude =  39.117407;
             cdPoints.longitude = 117.749584;
+            cdPoints.status = 0;
 
             cdPoints1.latitude =   39.117657;
             cdPoints1.longitude = 117.749347;
-
+            cdPoints1.status = 0;
 
             cdPoints2.latitude =  39.116971;
             cdPoints2.longitude = 117.749593;
+            cdPoints2.status = 0;
 
             cdPoints3.latitude = 39.116767;
             cdPoints3.longitude = 117.749254;
+            cdPoints3.status = 0;
 
             cdPoints4.latitude = 39.903828;
             cdPoints4.longitude = 116.185881;
+            cdPoints4.status = 0;
 
             cdPoints5.latitude =   39.88974380493164;
             cdPoints5.longitude = 116.63700103759766;
+            cdPoints5.status = 0;
 
 
             cdPoints6.latitude = 40.066759;
             cdPoints6.longitude = 116.334928;
+            cdPoints6.status = 0;
 
             cdPoints7.latitude = 40.06071090698242;
             cdPoints7.longitude = 116.35884094238281;
+            cdPoints7.status = 0;
 
             //39.890224,116.636894
             //116.334942,40.066759
