@@ -300,7 +300,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
             IHttpActionResult result;
             try
             {
-                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,SUM(Totalkm) as Totalkm,A.WXUserID,B.NickName,b.HeadPhoto,B.Sex,C.TeamName,B.TeamID from(select @rownum:= 0) d,running as A ,userinfo as B,team as C WHERE  DATE_SUB(CURDATE(), INTERVAL "+DayCount.ToString()+" DAY) <= date(A.CreateDate) AND  A.WXUserID=B.WxID AND A.TeamID=C.ID  GROUP BY WXUserID ";
+                string sql = @"SELECT @rownum:= @rownum + 1 as RankID,  E.Totalkm,E.WXUserID,E.NickName,E.HeadPhoto,E.Sex,E.TeamName,E.TeamID from (SELECT SUM(Totalkm) as Totalkm,A.WXUserID,B.NickName,b.HeadPhoto,B.Sex,B.TeamName,B.TeamID from running as A ,userinfo as B WHERE  DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(A.CreateDate) AND  A.WXUserID=B.WxID    GROUP BY WXUserID  ORDER BY Totalkm desc) E, (select @rownum:= 0) d";
 
                 var data = this.unitOfWork.context.Database.SqlQuery<RankModel>(sql, new object[0]);
                 var personData = data.Where(p => p.WXUserID == WXUserID);
