@@ -53,18 +53,18 @@ namespace Edu.Model.WeiXin
         public static List<CardPoints> GetPoints()
         {
             List<CardPoints> listPoints = new List<CardPoints>();
-            cdPoints.latitude =  39.117407;
-            cdPoints.longitude = 117.749584;
+            cdPoints.latitude =  39.11765657043457;
+            cdPoints.longitude = 117.7488784790039;
 
-            cdPoints1.latitude =   39.117657;
-            cdPoints1.longitude = 117.749347;
+            cdPoints1.latitude =   39.11702346801758;
+            cdPoints1.longitude = 117.7497329711914;
 
 
-            cdPoints2.latitude =  39.116971;
-            cdPoints2.longitude = 117.749593;
+            cdPoints2.latitude =  39.117401123046875;
+            cdPoints2.longitude = 117.74925231933594;
 
-            cdPoints3.latitude = 39.116767;
-            cdPoints3.longitude = 117.749254;
+            cdPoints3.latitude = 39.1178894004296875;
+            cdPoints3.longitude = 117.74901580810547;
 
             cdPoints4.latitude = 39.903828;
             cdPoints4.longitude = 116.185881;
