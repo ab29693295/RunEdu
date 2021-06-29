@@ -134,6 +134,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
         }
 
 
+
         [HttpPost]
         public IHttpActionResult CountCardPoint()
         {
@@ -177,7 +178,7 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
                                     PlayScore = PlayScore + 10;
                                     item.status = 1;
                                 }
-                               
+
 
 
                             }
@@ -545,10 +546,6 @@ LEFT JOIN (SELECT COUNT(*) as m,DATE_FORMAT(af5.CreateDate,'%m') as gptime from 
 
 
         }
-        /// <summary>
-        /// 提交跑步数据
-        /// </summary>
-        /// <returns></returns>
 
         [HttpPost]
         public IHttpActionResult ModyRun()
