@@ -78,4 +78,25 @@ namespace Edu.Model
 
 
     }
+
+
+    public class ScoreRankModel
+    {
+
+     
+
+
+        public string WXUserID;
+
+
+        public int RunTypeID;
+
+
+        public string RunTypeName;
+
+     
+        public int Score;
+
+        public string CreateDate;
+    }
 }

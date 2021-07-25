@@ -32,8 +32,26 @@ namespace Edu.Web.API
         {
             var run = unitOfWork.DScoreRank.Get(p => p.WXUserID == WXUserID);
 
+            List<ScoreRankModel> scoreList = new List<ScoreRankModel>();
 
-            return Json(new { R = true, Data = run });
+            if (run != null && run.Count() > 0)
+            {
+                foreach (var item in run)
+                {
+                    ScoreRankModel scoreRankModel = new ScoreRankModel();
+                    scoreRankModel.WXUserID = item.WXUserID;
+                    scoreRankModel.RunTypeID = Convert.ToInt32(item.RunTypeID);
+                    scoreRankModel.RunTypeName = item.RunTypeName;
+                    scoreRankModel.Score = Convert.ToInt32(item.Score);
+                    scoreRankModel.CreateDate = Convert.ToDateTime(item.CreateDate).ToString("yyyy.MM.dd");
+                    scoreList.Add(scoreRankModel);
+                }
+
+            }
+         
+
+
+            return Json(new { R = true, Data = scoreList });
         }
 
 
